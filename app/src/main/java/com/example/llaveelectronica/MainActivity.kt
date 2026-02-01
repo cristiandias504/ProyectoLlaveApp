@@ -6,10 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -32,10 +35,10 @@ class MainActivity : ComponentActivity() {
         private const val TAG = "MainActivity"
     }
 
-    // ID de la solicitud de permiso
+    // ==== ID de la solicitud de permiso ====
     private val requestPermissionsCode = 1001
 
-    // Receptor de Broadcast
+    // ==== Receptor de Broadcast ====
     private val receptorMensaje = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val mensaje = intent?.getStringExtra("Mensaje") ?: "Sin mensaje"
@@ -46,7 +49,7 @@ class MainActivity : ComponentActivity() {
                     Log.d(TAG, mensaje)
                     btnConectar.setText("Desconectar")
                 }
-                "Servicio Finalizado" -> {
+                "Conexión Bluetooth finalizada" -> {
                     Log.d(TAG, mensaje)
                     btnConectar.setText("Conectar")
                 }
@@ -54,7 +57,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Enviar Mensaje por broadcast
+    // ==== Enviar Mensaje por broadcast ====
     private fun enviarBroadcast(mensaje: String) {
         val enviarBroadcast = Intent("com.example.pruebaconexion.MensajeDeActivity").apply {
             setPackage(packageName)
@@ -67,6 +70,9 @@ class MainActivity : ComponentActivity() {
 
 
     private lateinit var btnConectar: Button
+    private lateinit var btnProximidad: Button
+    private lateinit var btnApagar: Button
+    private lateinit var btnAlarma: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,16 +82,41 @@ class MainActivity : ComponentActivity() {
         solicitarPermisos()
 
         btnConectar = findViewById(R.id.Conectar)
+        btnProximidad = findViewById(R.id.Proximidad)
+        btnApagar = findViewById(R.id.Apagar)
+        btnAlarma = findViewById(R.id.Alarma)
 
         btnConectar.setOnClickListener {
+            if (!verificarPermisosBluetooth()) {
+                Toast.makeText(this, "Permiso Bluetooth no otorgado", Toast.LENGTH_SHORT).show()
+                solicitarPermisos()
+                val intent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.fromParts("package", packageName, null)
+                )
+                startActivity(intent)
+                return@setOnClickListener
+            }
             val intent = Intent(this, ServicioConexion::class.java)
             if (btnConectar.text.toString() == "Conectar"){
                 startService(intent)
-                Log.d(TAG, "Boton presionado")
+                Log.d(TAG, "Botón presionado")
             } else if (btnConectar.text.toString() == "Desconectar"){
                 stopService(intent)
-                Log.d(TAG, "Boton presionado")
+                Log.d(TAG, "Botón presionado")
             }
+        }
+
+        btnProximidad.setOnClickListener {
+            enviarBroadcast("Proximidad")
+        }
+
+        btnApagar.setOnClickListener {
+            enviarBroadcast("Apagar")
+        }
+
+        btnAlarma.setOnClickListener {
+            enviarBroadcast("Alarma")
         }
     }
 
@@ -100,6 +131,13 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
         unregisterReceiver(receptorMensaje)
+    }
+
+    private fun verificarPermisosBluetooth(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.BLUETOOTH_CONNECT
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun solicitarPermisos() {
