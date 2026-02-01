@@ -27,12 +27,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LlaveElectronica">
 
-        <!--service
+        <service
             android:name=".ServicioConexion"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="connectedDevice" >
-        </service-->
+        </service>
 
         <activity
             android:name=".MainActivity"
