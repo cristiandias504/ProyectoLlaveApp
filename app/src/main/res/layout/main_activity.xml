@@ -11,13 +11,98 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="142dp"
-            android:text="Hola desde mi activity"
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="339dp"
+            android:layout_height="118dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp"
+            android:gravity="center"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.514"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="14dp" />
+            app:layout_constraintVertical_bias="0.094">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Aplicación sistema de acceso"
+                android:textColor="#050505"
+                android:textSize="40sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/Conectar"
+            android:layout_width="224dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="228dp"
+            android:backgroundTint="#8BC34A"
+            android:text="Conectar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.273" />
+
+        <Button
+            android:id="@+id/Proximidad"
+            android:layout_width="224dp"
+            android:layout_height="67dp"
+            android:layout_marginTop="76dp"
+            android:text="Activado"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Conectar" />
+
+        <Button
+            android:id="@+id/Apagar"
+            android:layout_width="224dp"
+            android:layout_height="67dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#8BC34A"
+            android:text="Apagar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Proximidad" />
+
+        <Button
+            android:id="@+id/Alarma"
+            android:layout_width="224dp"
+            android:layout_height="67dp"
+            android:backgroundTint="#ED4242"
+            android:text="Alarma"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Apagar"
+            app:layout_constraintVertical_bias="0.133" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Proximidad"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/Proximidad"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Conectar"
+            app:layout_constraintVertical_bias="0.771" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
