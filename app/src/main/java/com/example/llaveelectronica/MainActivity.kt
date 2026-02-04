@@ -38,6 +38,9 @@ class MainActivity : ComponentActivity() {
     // ==== ID de la solicitud de permiso ====
     private val requestPermissionsCode = 1001
 
+    // Variable estado de conexion
+    private var estadoConexion = 0  // 0=Desconectado, 1=Conectado, 2=Conectando
+
     // ==== Receptor de Broadcast ====
     private val receptorMensaje = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -45,14 +48,12 @@ class MainActivity : ComponentActivity() {
             Log.d(TAG, "Desde ServicioConexion: $mensaje")
 
             when (mensaje) {
-                "Servicio iniciado correctamente" -> {
-                    Log.d(TAG, mensaje)
-                    btnConectar.setText("Desconectar")
-                }
-                "Conexión Bluetooth finalizada" -> {
-                    Log.d(TAG, mensaje)
-                    btnConectar.setText("Conectar")
-                }
+                "Servicio iniciado correctamente" -> btnConectar.setText("Conectando")
+                "Desconectado, Reiniciando conexion" -> btnConectar.setText("Conectando")
+                "Conexion establecida Correctamente" -> btnConectar.setText("Desconectar")
+                "Conexión Bluetooth finalizada" -> btnConectar.setText("Conectar")
+                "Respuesta Verificación de estado = true" -> btnConectar.setText("Desconectar")
+                "Respuesta Verificación de estado = false" -> btnConectar.setText("Conectando")
             }
         }
     }
@@ -101,7 +102,7 @@ class MainActivity : ComponentActivity() {
             if (btnConectar.text.toString() == "Conectar"){
                 startService(intent)
                 Log.d(TAG, "Botón presionado")
-            } else if (btnConectar.text.toString() == "Desconectar"){
+            } else if (btnConectar.text.toString() == "Desconectar" || btnConectar.text.toString() == "Conectando"){
                 stopService(intent)
                 Log.d(TAG, "Botón presionado")
             }
@@ -112,11 +113,11 @@ class MainActivity : ComponentActivity() {
         }
 
         btnApagar.setOnClickListener {
-            enviarBroadcast("Apagar")
+            enviarBroadcast("Enviar 301")
         }
 
         btnAlarma.setOnClickListener {
-            enviarBroadcast("Alarma")
+            enviarBroadcast("Enviar 302")
         }
     }
 
@@ -127,7 +128,11 @@ class MainActivity : ComponentActivity() {
             this, receptorMensaje, filter, ContextCompat.RECEIVER_NOT_EXPORTED
         )
     }
-
+    override fun onResume() {
+        super.onResume()
+        // Enviar el broadcast para verificar el estado
+        enviarBroadcast("Verificación de estado")
+    }
     override fun onStop() {
         super.onStop()
         unregisterReceiver(receptorMensaje)
@@ -155,6 +160,26 @@ class MainActivity : ComponentActivity() {
 
         if (faltantes.isNotEmpty()) {
             requestPermissions(faltantes.toTypedArray(), requestPermissionsCode)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == requestPermissionsCode) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                Toast.makeText(this, "Permisos otorgados", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "La app necesita permisos para funcionar",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 }

@@ -8,7 +8,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.os.*
 import android.util.Log
-import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -38,7 +37,7 @@ class ServicioConexion: Service() {
     private var conexionEstablecida = false
     private var servicioFinalizado = false
     private var dispositivoGuardado: BluetoothDevice? = null
-    //private val procesadorDatos = ProcesadorDatos()
+    private val procesadorDatos = ProcesadorDatos()
 
 
     // ==== Receptor de broadcast ====
@@ -49,8 +48,8 @@ class ServicioConexion: Service() {
 
             when (mensaje) {
                 "Verificación de estado" -> enviarBroadcast("Respuesta Verificación de estado = $conexionEstablecida")
-                "Apagar" -> enviarMensajeBLE("Apagar")
-                "Alarma" -> enviarMensajeBLE("Alarma")
+                "Enviar 301" -> enviarMensajeBLE("301")
+                "Enviar 302" -> enviarMensajeBLE("302")
             }
         }
     }
@@ -157,7 +156,7 @@ class ServicioConexion: Service() {
         ) return
         bluetoothGatt = device.connectGatt(this, autoConnect, gattCallback)
     }
-    @SuppressLint("MissingPermission")
+    //@SuppressLint("MissingPermission")
     private val gattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(
             gatt: BluetoothGatt,
@@ -197,12 +196,12 @@ class ServicioConexion: Service() {
             val mensajeRecibido = characteristic.value.toString(Charsets.UTF_8)
             Log.d(TAG, "📥 RX: $mensajeRecibido")
             if (mensajeRecibido.length == 15) {
-                val respuesta = "200"//procesadorDatos.procesarClaveInical(mensajeRecibido)
+                val respuesta = procesadorDatos.procesarClaveInical(mensajeRecibido)
                 if (respuesta == "200"){
                     enviarMensajeBLE("200")
                 }
             } else if (mensajeRecibido.length == 5) {
-                val respuesta = "Mensaje de prueba" //procesadorDatos.procesarClaveDinamica(mensajeRecibido)
+                val respuesta = procesadorDatos.procesarClaveDinamica(mensajeRecibido)
                 enviarMensajeBLE(respuesta)
                 Log.d(TAG, "Clave Descifrada: $respuesta")
             } else if (mensajeRecibido.length == 4) {
@@ -220,7 +219,7 @@ class ServicioConexion: Service() {
             status: Int
         ) {
             escribiendo = false
-            //Log.d(TAG, "✍️ Escritura completada status=$status")
+            Log.d(TAG, "✍️ Escritura completada status=$status")
         }
     }
 
