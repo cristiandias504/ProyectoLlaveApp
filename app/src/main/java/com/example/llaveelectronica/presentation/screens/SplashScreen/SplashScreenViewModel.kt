@@ -18,7 +18,7 @@ class SplashScreenViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             // Simula delay de splash
-            delay(1000L)
+            delay(2000L)
             _navigateToWelcome.value = true
         }
     }

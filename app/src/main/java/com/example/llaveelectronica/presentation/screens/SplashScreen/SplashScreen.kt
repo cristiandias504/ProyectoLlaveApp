@@ -11,22 +11,42 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 
+//@Composable
+//fun SplashScreen(
+//    navController: NavHostController,
+//    viewModel: SplashScreenViewModel = viewModel(),
+//    modifier: Modifier = Modifier
+//) {
+//
+//    // Observa el estado de navegación
+//    val shouldNavigate by viewModel.navigateToWelcome.collectAsState()
+//
+//    if (shouldNavigate) {
+//        navController.navigate("welcome") {
+//            popUpTo("splash") { inclusive = true }
+//        }
+//    }
+//
+//    // UI
+//    SplashScreenUI(modifier)
+//}
+
 @Composable
 fun SplashScreen(
     navController: NavHostController,
     viewModel: SplashScreenViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
-
-    // Observa el estado de navegación
     val shouldNavigate by viewModel.navigateToWelcome.collectAsState()
 
-    if (shouldNavigate) {
-        navController.navigate("welcome") {
-            popUpTo("splash") { inclusive = true }
+    LaunchedEffect(shouldNavigate) {
+        if (shouldNavigate) {
+            navController.navigate("welcome") {
+                popUpTo("splash") { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
 
-    // UI
     SplashScreenUI(modifier)
 }

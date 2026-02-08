@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,12 +44,13 @@ fun WelcomeScreenUI(
                         0.65f to MaterialTheme.colorScheme.scrim//.copy(alpha = 0.8f)
                     )
                 )
-            ),
-        contentAlignment = Alignment.Center
+            )
+            .padding(top = 166.dp),
+
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(horizontal = 24.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
 
             // Logo
