@@ -1,4 +1,4 @@
-package com.example.llaveelectronica.presentation.screens
+package com.example.llaveelectronica.presentation.screens.WelcomeScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +28,7 @@ import com.example.llaveelectronica.R
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 @Composable
-fun WelcomeScreen(
+fun WelcomeScreenUI(
     onStartClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -55,7 +55,7 @@ fun WelcomeScreen(
             Image(
                 painter = painterResource(R.mipmap.logo),
                 contentDescription = null,
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier.size(180.dp)
             )
 
             Spacer(modifier = Modifier.height(14.dp))
@@ -105,9 +105,9 @@ fun WelcomeScreen(
     showBackground = true
 )
 @Composable
-fun viewWelcomeScreen(){
+fun viewWelcomeScreenUI(){
     LlaveElectronicaTheme{
-        WelcomeScreen(
+        WelcomeScreenUI(
             onStartClick = {}
         )
     }

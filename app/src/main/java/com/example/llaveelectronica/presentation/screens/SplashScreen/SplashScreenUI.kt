@@ -1,4 +1,4 @@
-package com.example.llaveelectronica.presentation.screens
+package com.example.llaveelectronica.presentation.screens.SplashScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,9 +17,7 @@ import com.example.llaveelectronica.R
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 @Composable
-fun SplashScreen(
-    modifier: Modifier = Modifier
-) {
+fun SplashScreenUI(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -37,7 +35,7 @@ fun SplashScreen(
         Image(
             painter = painterResource(id = R.mipmap.logo),
             contentDescription = "Logo",
-            modifier = Modifier.size(256.dp)
+            modifier = Modifier.size(180.dp)
         )
     }
 }
@@ -46,8 +44,8 @@ fun SplashScreen(
     showBackground = true
 )
 @Composable
-fun viewsplashScreen(){
+fun viewSplashScreenUI(){
     LlaveElectronicaTheme{
-        SplashScreen()
+        SplashScreenUI()
     }
 }

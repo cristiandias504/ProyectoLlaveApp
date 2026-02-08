@@ -21,9 +21,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.llaveelectronica.presentation.navigation.NavigationRoot
 import com.example.llaveelectronica.presentation.screens.SetupIntroScreen
-import com.example.llaveelectronica.presentation.screens.SplashScreen
-import com.example.llaveelectronica.presentation.screens.WelcomeScreen
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 class MainActivity : ComponentActivity() {
@@ -81,19 +80,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             LlaveElectronicaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPading ->
-//                    SplashScreen(
-//                        modifier = Modifier.fillMaxSize().padding(innerPading)
-//                    )
-//                    WelcomeScreen(
-//                        onStartClick = {},
-//                        modifier = Modifier.fillMaxSize().padding(innerPading)
-//                    )
-                    SetupIntroScreen(
-                        onStartClick = {},
-                        modifier = Modifier.fillMaxSize().padding(innerPading)
-                    )
-                }
+                NavigationRoot()
             }
         }
 

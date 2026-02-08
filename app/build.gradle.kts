@@ -1,7 +1,10 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -59,4 +62,18 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.dagger.hilt.navigation.compose)
+    implementation(libs.dagger.hilt)
+
+
+    implementation ("androidx.navigation:navigation-compose:2.7.0") // versión actual
+    implementation ("androidx.compose.animation:animation:1.5.0")     // animaciones oficiales
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0")
+
+
+
+
+    //ksp(libs.dagger.hilt.compiler)
 }
