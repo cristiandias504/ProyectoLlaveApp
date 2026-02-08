@@ -6,27 +6,24 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.llaveelectronica.presentation.screens.SetupIntroScreen
+import com.example.llaveelectronica.presentation.screens.SplashScreen
+import com.example.llaveelectronica.presentation.screens.WelcomeScreen
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 class MainActivity : ComponentActivity() {
@@ -77,48 +74,70 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.main_activity)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(0),
+            navigationBarStyle = SystemBarStyle.dark(0)
+        )
 
-        solicitarPermisos()
-
-        btnConectar = findViewById(R.id.Conectar)
-        btnProximidad = findViewById(R.id.Proximidad)
-        btnApagar = findViewById(R.id.Apagar)
-        btnAlarma = findViewById(R.id.Alarma)
-
-        btnConectar.setOnClickListener {
-            if (!verificarPermisosBluetooth()) {
-                Toast.makeText(this, "Permiso Bluetooth no otorgado", Toast.LENGTH_SHORT).show()
-                solicitarPermisos()
-                val intent = Intent(
-                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                    Uri.fromParts("package", packageName, null)
-                )
-                startActivity(intent)
-                return@setOnClickListener
-            }
-            val intent = Intent(this, ServicioConexion::class.java)
-            if (btnConectar.text.toString() == "Conectar"){
-                startService(intent)
-                Log.d(TAG, "Botón presionado")
-            } else if (btnConectar.text.toString() == "Desconectar" || btnConectar.text.toString() == "Conectando"){
-                stopService(intent)
-                Log.d(TAG, "Botón presionado")
+        setContent {
+            LlaveElectronicaTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPading ->
+//                    SplashScreen(
+//                        modifier = Modifier.fillMaxSize().padding(innerPading)
+//                    )
+//                    WelcomeScreen(
+//                        onStartClick = {},
+//                        modifier = Modifier.fillMaxSize().padding(innerPading)
+//                    )
+                    SetupIntroScreen(
+                        onStartClick = {},
+                        modifier = Modifier.fillMaxSize().padding(innerPading)
+                    )
+                }
             }
         }
 
-        btnProximidad.setOnClickListener {
-            enviarBroadcast("Proximidad")
-        }
+        //setContentView(R.layout.main_activity)
 
-        btnApagar.setOnClickListener {
-            enviarBroadcast("Enviar 301")
-        }
+        //solicitarPermisos()
 
-        btnAlarma.setOnClickListener {
-            enviarBroadcast("Enviar 302")
-        }
+//        btnConectar = findViewById(R.id.Conectar)
+//        btnProximidad = findViewById(R.id.Proximidad)
+//        btnApagar = findViewById(R.id.Apagar)
+//        btnAlarma = findViewById(R.id.Alarma)
+//
+//        btnConectar.setOnClickListener {
+//            if (!verificarPermisosBluetooth()) {
+//                Toast.makeText(this, "Permiso Bluetooth no otorgado", Toast.LENGTH_SHORT).show()
+//                solicitarPermisos()
+//                val intent = Intent(
+//                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//                    Uri.fromParts("package", packageName, null)
+//                )
+//                startActivity(intent)
+//                return@setOnClickListener
+//            }
+//            val intent = Intent(this, ServicioConexion::class.java)
+//            if (btnConectar.text.toString() == "Conectar"){
+//                startService(intent)
+//                Log.d(TAG, "Botón presionado")
+//            } else if (btnConectar.text.toString() == "Desconectar" || btnConectar.text.toString() == "Conectando"){
+//                stopService(intent)
+//                Log.d(TAG, "Botón presionado")
+//            }
+//        }
+//
+//        btnProximidad.setOnClickListener {
+//            enviarBroadcast("Proximidad")
+//        }
+//
+//        btnApagar.setOnClickListener {
+//            enviarBroadcast("Enviar 301")
+//        }
+//
+//        btnAlarma.setOnClickListener {
+//            enviarBroadcast("Enviar 302")
+//        }
     }
 
     override fun onStart() {
