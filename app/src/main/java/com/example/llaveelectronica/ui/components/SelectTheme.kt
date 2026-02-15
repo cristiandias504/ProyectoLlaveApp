@@ -26,7 +26,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.R
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,8 +39,10 @@ import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 @Composable
 fun SelectTheme (
-    viewModel: SetupIntoViewModel = viewModel()
+    viewModel: SetupIntoViewModel
 ) {
+    val selectThemeViewModel by viewModel.setupIntoState
+
     Box(
         modifier = Modifier
             .height(350.dp)
@@ -51,7 +56,7 @@ fun SelectTheme (
         ) {
             Text(
                 text = "Tema de la aplicación",
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.surfaceDim,
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -63,17 +68,18 @@ fun SelectTheme (
             ) {
                 Text(
                     text = "Automático",
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.surfaceDim,
                     style = MaterialTheme.typography.bodyLarge
                 )
-                var automatico by remember { mutableStateOf(false) }
 
                 RadioButton(
-                    selected = automatico,
-                    onClick = { automatico = !automatico },
+                    selected = selectThemeViewModel.autoTheme,
+                    onClick = {viewModel.onThemeChange(
+                        newAutoTheme = !selectThemeViewModel.autoTheme,
+                        newTheme = selectThemeViewModel.selectedThemeDark)},
                     colors = RadioButtonDefaults.colors(
-                        selectedColor = MaterialTheme.colorScheme.onPrimary,
-                        unselectedColor = MaterialTheme.colorScheme.onPrimary
+                        selectedColor = MaterialTheme.colorScheme.surfaceDim,
+                        unselectedColor = MaterialTheme.colorScheme.surfaceDim
                     )
                 )
             }
@@ -86,6 +92,10 @@ fun SelectTheme (
                     .height(160.dp)
                     .padding(horizontal = 24.dp)
                     .clip(RoundedCornerShape(28.dp))
+                    .alpha(
+                        if(selectThemeViewModel.autoTheme) 0.3f
+                        else 1.0f
+                    )
                     .background(Color(0xFF3E5559)), // gris verdoso
                 contentAlignment = Alignment.Center
             ) {
@@ -104,7 +114,7 @@ fun SelectTheme (
                             .height(180.dp)
                             .padding(horizontal = 0.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .background(MaterialTheme.colorScheme.inverseSurface), // gris verdoso
+                            .background(Color(0xFF2B3133)),
                         contentAlignment = Alignment.Center
                     ) {
                         Box(
@@ -113,7 +123,55 @@ fun SelectTheme (
                                 .fillMaxSize()
                                 .padding(6.dp)
                                 .clip(RoundedCornerShape(14.dp))
-                                .background(MaterialTheme.colorScheme.onPrimary), // gris verdoso
+                                //.background(MaterialTheme.colorScheme.onPrimary),
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colorStops = arrayOf(
+                                            0.0f to Color(0xFF006874),
+                                            0.10f to Color(0xFF006874),
+                                            0.65f to Color(0xFFFFFFFF)
+                                        )
+                                    )
+                                ),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(top = 5.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .background(Color.Black, shape = CircleShape)
+                                ) {}
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .width(110.dp)
+                            .height(180.dp)
+                            .padding(horizontal = 0.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color(0xFF2B3133)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+
+                                .fillMaxSize()
+                                .padding(6.dp)
+                                .clip(RoundedCornerShape(14.dp))
+                                //.background(MaterialTheme.colorScheme.scrim), // gris verdoso
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colorStops = arrayOf(
+                                            0.0f to Color(0xFF006874),
+                                            0.10f to Color(0xFF006874),
+                                            0.65f to Color(0xFF000000)
+                                        )
+                                    )
+                                ),
                             contentAlignment = Alignment.TopCenter
                         ) {
                             Column(
@@ -127,36 +185,6 @@ fun SelectTheme (
                             }
                         }
                     }
-
-                    Box(
-                        modifier = Modifier
-                            .width(110.dp)
-                            .height(180.dp)
-                            .padding(horizontal = 0.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(MaterialTheme.colorScheme.inverseSurface), // gris verdoso
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-
-                                .fillMaxSize()
-                                .padding(6.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(MaterialTheme.colorScheme.scrim), // gris verdoso
-                            contentAlignment = Alignment.TopCenter
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(top = 5.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(8.dp)              // tamaño del círculo
-                                        .background(Color.White, shape = CircleShape)  // color y forma de círculo
-                                ) {}
-                            }
-                        }
-                    }
                 }
             }
 
@@ -165,22 +193,38 @@ fun SelectTheme (
             var selected by remember { mutableStateOf("Oscuro") }
 
             Row (
-                horizontalArrangement = Arrangement.spacedBy(80.dp)
+                horizontalArrangement = Arrangement.spacedBy(80.dp),
+                modifier = Modifier
+                    .alpha(
+                        if(selectThemeViewModel.autoTheme) 0.3f
+                        else 1.0f
+                    )
             ) {
                 listOf("Claro", "Oscuro").forEach { option ->
                     Column {
                         Text(
                             text = option,
-                            color = MaterialTheme.colorScheme.onPrimary)
+                            color = MaterialTheme.colorScheme.surfaceDim)
                         RadioButton(
+                            enabled = !selectThemeViewModel.autoTheme,
                             selected = selected == option,
-                            onClick = { selected = option},
+                            onClick = {
+                                selected = option
+
+                                if (option == "Oscuro") {
+                                   viewModel.onThemeChange(newTheme = true)
+
+                                } else {
+                                    viewModel.onThemeChange(newTheme = false)
+                                }
+                                      },
                             colors = RadioButtonDefaults.colors(
-                                selectedColor = MaterialTheme.colorScheme.onPrimary,
-                                unselectedColor = MaterialTheme.colorScheme.onPrimary
+                                selectedColor = MaterialTheme.colorScheme.surfaceDim,
+                                unselectedColor = MaterialTheme.colorScheme.surfaceDim,
+                                disabledSelectedColor = MaterialTheme.colorScheme.surfaceDim,
+                                disabledUnselectedColor = MaterialTheme.colorScheme.surfaceDim
                             )
                         )
-
                     }
                 }
             }
@@ -196,7 +240,9 @@ fun SelectTheme (
 fun ViewSelectTheme(){
     LlaveElectronicaTheme {
         AppBackground {
-            SelectTheme()
+            SelectTheme(
+                viewModel = viewModel()
+            )
         }
     }
 }

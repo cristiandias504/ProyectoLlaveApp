@@ -50,7 +50,7 @@ private val lightScheme = lightColorScheme(
 )
 
 private val darkScheme = darkColorScheme(
-    primary = primaryDark,
+    primary = primaryLight,
     onPrimary = onPrimaryDark,
     primaryContainer = primaryContainerDark,
     onPrimaryContainer = onPrimaryContainerDark,
@@ -74,7 +74,7 @@ private val darkScheme = darkColorScheme(
     onSurfaceVariant = onSurfaceVariantDark,
     outline = outlineDark,
     outlineVariant = outlineVariantDark,
-    scrim = scrimDark,
+    scrim = onSurfaceDark,
     inverseSurface = inverseSurfaceDark,
     inverseOnSurface = inverseOnSurfaceDark,
     inversePrimary = inversePrimaryDark,
@@ -101,13 +101,14 @@ val unspecified_scheme = ColorFamily(
 
 @Composable
 fun LlaveElectronicaTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = true, // = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
-  val colorScheme = lightScheme //when {
-      //darkTheme -> darkScheme
-      //else -> lightScheme
-  //}
+  val colorScheme = //lightScheme
+      when {
+          darkTheme -> lightScheme
+          else -> darkScheme
+      }
 
   MaterialTheme(
     colorScheme = colorScheme,

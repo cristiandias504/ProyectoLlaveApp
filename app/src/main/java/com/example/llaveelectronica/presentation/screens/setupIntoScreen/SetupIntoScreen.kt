@@ -24,14 +24,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.llaveelectronica.R
-import com.example.llaveelectronica.ui.components.AddVehicle
 import com.example.llaveelectronica.ui.components.AddVehicle
 import com.example.llaveelectronica.ui.components.AppBackground
 import com.example.llaveelectronica.ui.components.Authentication
@@ -52,39 +48,10 @@ import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 @Composable
 fun SetupIntroScreen(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: SetupIntoViewModel = viewModel()
+    //modifier: Modifier = Modifier,
+    viewModel: SetupIntoViewModel
 ) {
-
-    var avance by remember { mutableIntStateOf(0) }
-    var currentIndex by remember { mutableIntStateOf(0) }
-
-    val screens = listOf<@Composable () -> Unit>(
-        {
-                Text(
-                    text = "Vamos a configurar la aplicación",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 160.dp),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleLarge
-                )
-        },
-        { SelectTheme() },
-        { Permissions() },
-        {
-            Authentication(
-                pinLength = 4,
-                onPinComplete = { /* avanzar */ }
-            )
-        },
-        { PersonalData() },
-        {
-            var marca by remember { mutableStateOf("Ktm") }
-            AddVehicle(
-            valorSeleccionado = marca,
-            onValorSeleccionadoChange = {marca = it}
-        ) }
-    )
+    val setupIntoScreenViewModel by viewModel.setupIntoState
 
     Box(
         modifier = Modifier
@@ -102,8 +69,8 @@ fun SetupIntroScreen(
             Image(
                 painter = painterResource(R.mipmap.logo),
                 contentDescription = null,
-                modifier = Modifier
-                    .size(128.dp)
+                modifier = Modifier.size(128.dp),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surfaceDim)
             )
 
             Spacer(modifier = Modifier.height(14.dp))
@@ -112,16 +79,14 @@ fun SetupIntroScreen(
             Text(
                 text = "Mobile Access Key",
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.surfaceDim,
                 style = MaterialTheme.typography.titleLarge
             )
 
             Spacer(modifier = Modifier.height((16.dp)))
 
-            val progress by viewModel.progress
-
             val animatedProgress by animateFloatAsState(
-                targetValue = progress,
+                targetValue = setupIntoScreenViewModel.progress,
                 animationSpec = tween(400),
                 label = "ProgressAnim"
             )
@@ -139,28 +104,54 @@ fun SetupIntroScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             AnimatedContent(
-                targetState = currentIndex,
+                targetState = setupIntoScreenViewModel.currentStep,
                 transitionSpec = {
                     slideInHorizontally { it } togetherWith
                             slideOutHorizontally { -it }
                 },
                 label = "slide"
-            ) { index ->
-                screens[index]()
+            ) { step ->
+
+                when (step) {
+                    SetupStep.Welcome -> {
+                        Text(
+                            text = "Vamos a configurar la aplicación",
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 160.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+
+                    SetupStep.Theme -> SelectTheme(viewModel)
+
+                    SetupStep.Permissions -> Permissions()
+
+                    SetupStep.Pin -> Authentication(
+                        pinLength = 4,
+                        onPinComplete = { /* viewModel.onPinChange(it) */ }
+                    )
+
+                    SetupStep.PersonalData -> PersonalData()
+
+                    SetupStep.Vehicle -> AddVehicle(
+                        valorSeleccionado = setupIntoScreenViewModel.marca,
+                        onValorSeleccionadoChange = { /* viewModel.onMarcaChange(it) */ }
+                    )
+
+                    SetupStep.Completed -> Text(
+                        text = "Configuración completada",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 160.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.titleLarge)
+                }
             }
         }
 
         // Botón
         Button(
-            onClick = {
-                avance += 1
-                viewModel.setProgress(avance)
-
-                if (currentIndex < screens.lastIndex) {
-                    currentIndex++
-                }
-
-                      }, //onStartClick,
+            onClick = { viewModel.onNextClicked() },
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
@@ -170,7 +161,7 @@ fun SetupIntroScreen(
                 .padding(bottom = 140.dp)
                 .height(42.dp)
         ) {
-            Text(text = "Comenzar", color = Color.White, fontSize = 16.sp)
+            Text(text = "Continuar", color = Color.White, fontSize = 16.sp)
         }
     }
 }
@@ -183,7 +174,8 @@ fun ViewSetupIntroScreen(){
     LlaveElectronicaTheme{
         AppBackground {
             SetupIntroScreen(
-                onClick = {}
+                onClick = {},
+                viewModel = viewModel(),
             )
         }
     }

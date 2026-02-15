@@ -1,25 +1,19 @@
 package com.example.llaveelectronica.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -31,18 +25,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.MotionScene
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.llaveelectronica.R
-import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 @Composable
 fun PersonalData (
-    viewModel: SetupIntoViewModel = viewModel()
+    //viewModel: SetupIntoViewModel = viewModel()
 ) {
     Box(
         modifier = Modifier
@@ -58,7 +47,7 @@ fun PersonalData (
         ) {
             Text(
                 text = "Tus Datos",
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.surfaceDim,
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -77,16 +66,16 @@ fun PersonalData (
 
                     Icon(
                         imageVector = Icons.Filled.AccountCircle,
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.surfaceDim,
                         contentDescription = "User",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
                     )
 
                     Spacer(modifier = Modifier.height(80.dp))
 
                     Icon(
                         imageVector = Icons.Filled.Call,
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.surfaceDim,
                         contentDescription = "Call",
                         modifier = Modifier.size(32.dp)
                     )
@@ -106,45 +95,45 @@ fun PersonalData (
                     TextField(
                         value = nombre,
                         onValueChange = { nombre = it },
-                        label = { Text("Nombre", color = MaterialTheme.colorScheme.onPrimary,) },
+                        label = { Text("Nombre", color = MaterialTheme.colorScheme.surfaceDim) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
                             disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                            unfocusedIndicatorColor = MaterialTheme.colorScheme.onPrimary,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.surfaceDim,
+                            focusedTextColor = MaterialTheme.colorScheme.surfaceDim,
+                            unfocusedTextColor = MaterialTheme.colorScheme.surfaceDim,
                         )
                     )
 
                     TextField(
                         value = apellido,
                         onValueChange = { apellido = it },
-                        label = { Text("Apellido", color = MaterialTheme.colorScheme.onPrimary,) },
+                        label = { Text("Apellido", color = MaterialTheme.colorScheme.surfaceDim) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
                             disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                            unfocusedIndicatorColor = MaterialTheme.colorScheme.onPrimary,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.surfaceDim,
+                            focusedTextColor = MaterialTheme.colorScheme.surfaceDim,
+                            unfocusedTextColor = MaterialTheme.colorScheme.surfaceDim,
                         )
                     )
 
                     TextField(
                         value = telefono,
                         onValueChange = { telefono = it},
-                        label = { Text("Teléfono", color = MaterialTheme.colorScheme.onPrimary,) },
+                        label = { Text("Teléfono", color = MaterialTheme.colorScheme.surfaceDim) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
                             disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                            unfocusedIndicatorColor = MaterialTheme.colorScheme.onPrimary,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.surfaceDim,
+                            focusedTextColor = MaterialTheme.colorScheme.surfaceDim,
+                            unfocusedTextColor = MaterialTheme.colorScheme.surfaceDim,
                         )
                     )
                 }
