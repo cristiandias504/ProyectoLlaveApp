@@ -55,6 +55,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.compose.ui.text.google.fonts)
+    implementation(libs.ui)
+    implementation(libs.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,6 +73,7 @@ dependencies {
     implementation ("androidx.navigation:navigation-compose:2.7.0") // versión actual
     implementation ("androidx.compose.animation:animation:1.5.0")     // animaciones oficiales
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0")
+    implementation("androidx.compose.material:material-icons-extended-android:1.7.8") // Iconos Material Design 3
 
 
 

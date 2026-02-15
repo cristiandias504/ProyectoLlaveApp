@@ -1,15 +1,13 @@
-package com.example.llaveelectronica.presentation.screens.SplashScreen
+package com.example.llaveelectronica.presentation.screens.splashScreen
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,23 +16,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.llaveelectronica.R
+import com.example.llaveelectronica.ui.components.AppBackground
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreenUI(modifier: Modifier = Modifier) {
+fun SplashScreenUI(
+    modifier: Modifier = Modifier,
+    onAnimationFinished: () -> Unit = {}
+) {
 
     var animate by remember { mutableStateOf(false) }
 
+    val windowInfo = LocalWindowInfo.current
+    val screenHeight = with(LocalDensity.current) {
+        windowInfo.containerSize.height.toDp()
+    }
+
+    // Dispara la animación
     LaunchedEffect(Unit) {
         delay(600)
         animate = true
+    }
+
+    // Avisar cuando la animación terminó
+    LaunchedEffect(animate) {
+        if (animate) {
+            delay(800) // duración de la animación
+            onAnimationFinished()
+        }
     }
 
     val startSize = 200.dp
@@ -51,9 +67,7 @@ fun SplashScreenUI(modifier: Modifier = Modifier) {
 
     val logoOffsetY by animateDpAsState(
         targetValue = if (animate) {
-            -(LocalConfiguration.current.screenHeightDp.dp / 2) +
-                    166.dp +
-                    (endSize / 2)
+            -(screenHeight / 2) + 166.dp + (endSize / 2)
         } else {
             0.dp
         },
@@ -65,20 +79,9 @@ fun SplashScreenUI(modifier: Modifier = Modifier) {
     )
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0.0f to MaterialTheme.colorScheme.primary,
-                        0.10f to MaterialTheme.colorScheme.primary,
-                        0.65f to MaterialTheme.colorScheme.scrim
-                    )
-                )
-            ),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-
         Image(
             painter = painterResource(id = R.mipmap.logo),
             contentDescription = "Logo",
@@ -89,12 +92,14 @@ fun SplashScreenUI(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview (
+@Preview(
     showBackground = true
 )
 @Composable
-fun viewSplashScreenUI(){
+fun ViewSplashScreenUI(){
     LlaveElectronicaTheme{
-        SplashScreenUI()
+        AppBackground {
+            SplashScreenUI()
+        }
     }
 }

@@ -15,14 +15,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.llaveelectronica.presentation.navigation.NavigationRoot
-import com.example.llaveelectronica.presentation.screens.SetupIntroScreen
+import com.example.llaveelectronica.ui.components.AppBackground
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 class MainActivity : ComponentActivity() {
@@ -80,7 +76,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             LlaveElectronicaTheme {
-                NavigationRoot()
+                AppBackground {
+                    NavigationRoot()
+                }
             }
         }
 
