@@ -1,7 +1,18 @@
 package com.example.llaveelectronica.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterExitState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,11 +20,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.CheckCircleOutline
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -25,41 +42,43 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
+import kotlinx.coroutines.delay
+
 
 @Composable
 fun Authentication (
-    viewModel: SetupIntoViewModel = viewModel(),
-    pinLength: Int = 4,
-    onPinComplete: (String) -> Unit
+    viewModel: SetupIntoViewModel,
+    isActive: Boolean
 ) {
     var pin by remember { mutableStateOf("") }
-    val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus() // 👈 abre teclado al entrar
+    val authenticationViewModel by viewModel.setupIntoState
+    val confirmation = authenticationViewModel.firstPinCompleteEvent
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+
+    LaunchedEffect(isActive) {
+        if (isActive) {
+            viewModel.stateButton(false)
+            delay(100)
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
     }
-    TextField(
-        value = pin,
-        onValueChange = {},
-        modifier = Modifier
-            .focusRequester(focusRequester)
-            .focusable()
-            .size(1.dp)
-            .alpha(0f),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.NumberPassword
-        )
-    )
 
     Box(
         modifier = Modifier
@@ -68,6 +87,46 @@ fun Authentication (
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.TopCenter
     ) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .height(1.dp)
+                .width(0.dp)
+        ) {
+            TextField(
+                value = pin,
+                onValueChange = { newValue ->
+
+                    val filtered = newValue.filter { it.isDigit() }.take(4)
+
+                    when {
+                        filtered.length > pin.length -> {
+                            val newDigit = filtered.last()
+                            viewModel.registerPin(confirmation = confirmation, digit = newDigit.toString())
+                        }
+                        filtered.length < pin.length -> {
+                            viewModel.registerPin(confirmation = confirmation, digit = "D")
+                        }
+                    }
+
+                    pin = filtered
+
+                    if (pin.length == 4) pin = ""
+                },
+
+                modifier = Modifier
+                    .height(1.dp)
+                    .width(0.dp)
+                    .focusRequester(focusRequester),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number
+                ),
+                visualTransformation = VisualTransformation.None,
+                singleLine = true,
+                enabled = !authenticationViewModel.stateButton
+            )
+        }
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -81,30 +140,166 @@ fun Authentication (
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // UI visible
+            val offsetX = remember { Animatable(0f) }
+            val pinError = authenticationViewModel.pinError
+
+            LaunchedEffect(pinError) {
+                if (pinError) {
+                    repeat(4) {
+                        offsetX.animateTo(-20f, tween(50))
+                        offsetX.animateTo(20f, tween(50))
+                    }
+                    offsetX.animateTo(0f)
+                }
+            }
+
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier
+                    .offset(x = offsetX.value.dp)
+                    .clickable {
+                        // Abre el teclado al tocar el Row
+                        focusRequester.requestFocus()
+                        keyboardController?.show()
+                        pin = ""
+                        viewModel.registerPin(confirmation = confirmation, digit = "R")
+                    }
             ) {
-                repeat(pinLength) { index ->
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (index < pin.length) {
-                            Box(
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .background(
-                                        MaterialTheme.colorScheme.primary,
-                                        CircleShape
-                                    )
-                            )
-                        }
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .border(
+                            width = 2.dp,
+                            color = if (pinError) Color.Red else Color.Transparent,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (pin.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    CircleShape
+                                )
+                        )
                     }
                 }
+
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .border(
+                            width = 2.dp,
+                            color = if (pinError) Color.Red else Color.Transparent,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (pin.length >= 2) {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    CircleShape
+                                )
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .border(
+                            width = 2.dp,
+                            color = if (pinError) Color.Red else Color.Transparent,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (pin.length >= 3) {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    CircleShape
+                                )
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .border(
+                            width = 2.dp,
+                            color = if (pinError) Color.Red else Color.Transparent,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (pin.length >= 4) {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    CircleShape
+                                )
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            val visible = authenticationViewModel.stateButton
+            var startAnimation by remember { mutableStateOf(false) }
+
+            LaunchedEffect(visible) {
+                if (visible) {
+                    delay(300) // Tiempo para que el teclado termine de cerrarse
+                    startAnimation = true
+                } else {
+                    startAnimation = false
+                }
+            }
+
+            val scale by animateFloatAsState(
+                targetValue = if (startAnimation) 1f else 0f,
+                animationSpec = spring(
+                    dampingRatio = 0.25f,
+                    stiffness = 300f
+                ),
+//                finishedListener = { value ->
+//                    if (value == 1f) {
+//                        // Habilitar Botón
+//
+//                    }
+//                },
+                label = ""
+            )
+
+            if (visible) {
+                Icon(
+                    imageVector = Icons.Filled.CheckCircleOutline,
+                    contentDescription = "Verified",
+                    tint = Color(0xFF4CAF50),
+                    modifier = Modifier
+                        .size(128.dp)
+                        .scale(scale)
+                )
             }
         }
     }
@@ -119,8 +314,8 @@ fun ViewAuthentication(){
     LlaveElectronicaTheme {
         AppBackground {
             Authentication(
-                pinLength = 4,
-                onPinComplete = {}
+                viewModel = viewModel(),
+                isActive = true
             )
         }
     }

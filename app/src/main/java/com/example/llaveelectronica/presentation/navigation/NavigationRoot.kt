@@ -6,7 +6,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntroScreen
-import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupStep
 import com.example.llaveelectronica.presentation.screens.splashScreen.SplashScreen
 import com.example.llaveelectronica.presentation.screens.welcomeScreen.WelcomeScreen
 

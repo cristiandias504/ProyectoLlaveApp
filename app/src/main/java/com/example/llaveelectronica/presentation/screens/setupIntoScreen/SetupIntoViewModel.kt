@@ -3,6 +3,8 @@ package com.example.llaveelectronica.presentation.screens.setupIntoScreen
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 class SetupIntoViewModel : ViewModel() {
 
@@ -13,8 +15,8 @@ class SetupIntoViewModel : ViewModel() {
         val nextStep = when (_setupIntoState.value.currentStep) {
             SetupStep.Welcome -> SetupStep.Theme
             SetupStep.Theme -> SetupStep.Permissions
-            SetupStep.Permissions -> SetupStep.Pin
-            SetupStep.Pin -> SetupStep.PersonalData
+            SetupStep.Permissions -> SetupStep.Authentication
+            SetupStep.Authentication -> SetupStep.PersonalData
             SetupStep.PersonalData -> SetupStep.Vehicle
             SetupStep.Vehicle -> SetupStep.Completed
             SetupStep.Completed -> SetupStep.Theme
@@ -31,7 +33,7 @@ class SetupIntoViewModel : ViewModel() {
             SetupStep.Welcome -> 0f
             SetupStep.Theme -> 0.2f
             SetupStep.Permissions -> 0.4f
-            SetupStep.Pin -> 0.6f
+            SetupStep.Authentication -> 0.6f
             SetupStep.PersonalData -> 0.8f
             SetupStep.Vehicle -> 1f
             SetupStep.Completed -> 1f
@@ -51,6 +53,106 @@ class SetupIntoViewModel : ViewModel() {
         )
         if(accepted) {
             onNextClicked()
+            _setupIntoState.value = _setupIntoState.value.copy(
+                permissionsDenied = false
+            )
+        } else {
+            _setupIntoState.value = _setupIntoState.value.copy(
+                permissionsDenied = true
+            )
         }
+    }
+
+    fun registerPin(confirmation: Boolean, digit: String) {
+        if (!confirmation){
+            if (digit == "D") {
+                // Eliminar el ultimo dígito
+                if (_setupIntoState.value.pin.isNotEmpty()) {
+                    _setupIntoState.value = _setupIntoState.value.copy(
+                        pin = _setupIntoState.value.pin.dropLast(1)
+                    )
+                }
+            } else if (digit == "R") {
+                // Eliminar totalmente el valor de pin
+                _setupIntoState.value = _setupIntoState.value.copy(
+                    pin = ""
+                )
+            } else {
+                // Agregar el dígito
+                _setupIntoState.value = _setupIntoState.value.copy(
+                    pin = _setupIntoState.value.pin + digit,
+                    pinError = false
+                )
+                if (_setupIntoState.value.pin.length == 4) {
+                    _setupIntoState.value = _setupIntoState.value.copy(
+                        firstPinCompleteEvent = true
+                    )
+                }
+            }
+        } else {
+            if (digit == "D") {
+                // Eliminar el ultimo dígito
+                if (_setupIntoState.value.pin.isNotEmpty()) {
+                    _setupIntoState.value = _setupIntoState.value.copy(
+                        pinConfirmation = _setupIntoState.value.pin.dropLast(1)
+                    )
+                }
+            } else if (digit == "R") {
+                // Eliminar totalmente el valor de pin
+                _setupIntoState.value = _setupIntoState.value.copy(
+                    pinConfirmation = ""
+                )
+            } else {
+                // Agregar el dígito
+                _setupIntoState.value = _setupIntoState.value.copy(
+                    pinConfirmation = _setupIntoState.value.pinConfirmation + digit
+                )
+                if (_setupIntoState.value.pinConfirmation.length == 4) {
+                    if (_setupIntoState.value.pin == _setupIntoState.value.pinConfirmation) {
+                      _setupIntoState.value = _setupIntoState.value.copy(
+                          stateButton = true
+                      )
+                    } else {
+                        _setupIntoState.value = _setupIntoState.value.copy(
+                            pinError = true,
+                            pin = "",
+                            pinConfirmation = "",
+                            firstPinCompleteEvent = false,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun stateButton (state: Boolean) {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            stateButton = state
+        )
+    }
+
+    fun registerNombre (nombre: String) {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            nombre = nombre,
+            datosCompletos = true,
+
+        )
+        if (_setupIntoState.value.nombre.isEmpty()) {
+            _setupIntoState.value = _setupIntoState.value.copy(
+                datosCompletos = false
+            )
+        }
+    }
+
+    fun registerApellido (apellido: String) {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            apellido = apellido
+        )
+    }
+
+    fun registerCelular (celular: String) {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            celular = celular
+        )
     }
 }

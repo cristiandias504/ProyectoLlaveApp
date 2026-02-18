@@ -27,12 +27,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 @Composable
 fun PersonalData (
-    //viewModel: SetupIntoViewModel = viewModel()
+    viewModel: SetupIntoViewModel
 ) {
+
+    val personalDataViewModel by viewModel.setupIntoState
+
     Box(
         modifier = Modifier
             //.fillMaxWidth()
@@ -94,7 +99,10 @@ fun PersonalData (
 
                     TextField(
                         value = nombre,
-                        onValueChange = { nombre = it },
+                        onValueChange = {
+                            nombre = it
+                            viewModel.registerNombre(it)
+                                        },
                         label = { Text("Nombre", color = MaterialTheme.colorScheme.surfaceDim) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
@@ -109,7 +117,10 @@ fun PersonalData (
 
                     TextField(
                         value = apellido,
-                        onValueChange = { apellido = it },
+                        onValueChange = {
+                            apellido = it
+                            viewModel.registerApellido(it)
+                        },
                         label = { Text("Apellido", color = MaterialTheme.colorScheme.surfaceDim) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
@@ -124,7 +135,10 @@ fun PersonalData (
 
                     TextField(
                         value = telefono,
-                        onValueChange = { telefono = it},
+                        onValueChange = {
+                            telefono = it
+                            viewModel.registerCelular(it)
+                        },
                         label = { Text("Teléfono", color = MaterialTheme.colorScheme.surfaceDim) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
@@ -150,7 +164,9 @@ fun PersonalData (
 fun ViewPersonalData(){
     LlaveElectronicaTheme {
         AppBackground {
-            PersonalData()
+            PersonalData(
+                viewModel = viewModel()
+            )
         }
     }
 }
