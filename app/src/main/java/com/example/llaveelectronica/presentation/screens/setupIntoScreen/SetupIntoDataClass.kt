@@ -1,7 +1,5 @@
 package com.example.llaveelectronica.presentation.screens.setupIntoScreen
 
-import android.widget.Button
-
 sealed class SetupStep {
     object Welcome : SetupStep()
     object Theme : SetupStep()

@@ -3,8 +3,6 @@ package com.example.llaveelectronica.presentation.screens.setupIntoScreen
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 
 class SetupIntoViewModel : ViewModel() {
 
@@ -25,6 +23,12 @@ class SetupIntoViewModel : ViewModel() {
         _setupIntoState.value = _setupIntoState.value.copy(
             currentStep = nextStep,
             progress = calculateProgress(nextStep)
+        )
+    }
+
+    fun stateButton (state: Boolean) {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            stateButton = state
         )
     }
 
@@ -125,34 +129,31 @@ class SetupIntoViewModel : ViewModel() {
         }
     }
 
-    fun stateButton (state: Boolean) {
-        _setupIntoState.value = _setupIntoState.value.copy(
-            stateButton = state
-        )
-    }
-
     fun registerNombre (nombre: String) {
         _setupIntoState.value = _setupIntoState.value.copy(
-            nombre = nombre,
-            datosCompletos = true,
-
+            nombre = nombre
         )
-        if (_setupIntoState.value.nombre.isEmpty()) {
-            _setupIntoState.value = _setupIntoState.value.copy(
-                datosCompletos = false
-            )
-        }
+        datosCompletos()
     }
 
     fun registerApellido (apellido: String) {
         _setupIntoState.value = _setupIntoState.value.copy(
             apellido = apellido
         )
+        datosCompletos()
     }
 
     fun registerCelular (celular: String) {
         _setupIntoState.value = _setupIntoState.value.copy(
             celular = celular
         )
+        datosCompletos()
+    }
+
+    fun datosCompletos () {
+        if (_setupIntoState.value.nombre.length >= 2
+            && _setupIntoState.value.apellido.length >= 2
+            && _setupIntoState.value.celular.length == 10) stateButton(true)
+        else stateButton(false)
     }
 }

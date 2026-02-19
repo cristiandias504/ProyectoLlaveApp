@@ -1,5 +1,6 @@
 package com.example.llaveelectronica.presentation.screens.setupIntoScreen
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -54,9 +55,6 @@ import com.example.llaveelectronica.ui.components.Permissions
 import com.example.llaveelectronica.ui.components.PersonalData
 import com.example.llaveelectronica.ui.components.SelectTheme
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
-import android.Manifest
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 
 
 // Lanzar ajustes de la aplicación para aceptar manualmente los permisos
@@ -211,10 +209,7 @@ fun SetupIntroScreen(
 
                     SetupStep.Authentication -> Authentication(viewModel, isActive = true)
 
-                    SetupStep.PersonalData -> {
-                        //stateButton2 = false
-                        PersonalData(viewModel)
-                    }
+                    SetupStep.PersonalData -> PersonalData(viewModel)
 
                     SetupStep.Vehicle -> AddVehicle(
                         valorSeleccionado = setupIntoScreenViewModel.marca,

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Call
@@ -18,13 +20,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -36,7 +44,9 @@ fun PersonalData (
     viewModel: SetupIntoViewModel
 ) {
 
-    val personalDataViewModel by viewModel.setupIntoState
+    LaunchedEffect(Unit) {
+        viewModel.stateButton(false)
+    }
 
     Box(
         modifier = Modifier
@@ -88,6 +98,10 @@ fun PersonalData (
 
                 Spacer(modifier = Modifier.width(14.dp))
 
+                val focusRequesterApellido = remember { FocusRequester() }
+                val focusRequesterTelefono = remember { FocusRequester() }
+                val focusManager = LocalFocusManager.current
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -102,8 +116,16 @@ fun PersonalData (
                         onValueChange = {
                             nombre = it
                             viewModel.registerNombre(it)
-                                        },
+                        },
                         label = { Text("Nombre", color = MaterialTheme.colorScheme.surfaceDim) },
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = {
+                                focusRequesterApellido.requestFocus()
+                            }
+                        ),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
@@ -112,7 +134,8 @@ fun PersonalData (
                             unfocusedIndicatorColor = MaterialTheme.colorScheme.surfaceDim,
                             focusedTextColor = MaterialTheme.colorScheme.surfaceDim,
                             unfocusedTextColor = MaterialTheme.colorScheme.surfaceDim,
-                        )
+                        ),
+                        modifier = Modifier.focusRequester(FocusRequester.Default),
                     )
 
                     TextField(
@@ -122,6 +145,14 @@ fun PersonalData (
                             viewModel.registerApellido(it)
                         },
                         label = { Text("Apellido", color = MaterialTheme.colorScheme.surfaceDim) },
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = {
+                                focusRequesterTelefono.requestFocus()
+                            }
+                        ),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
@@ -130,16 +161,36 @@ fun PersonalData (
                             unfocusedIndicatorColor = MaterialTheme.colorScheme.surfaceDim,
                             focusedTextColor = MaterialTheme.colorScheme.surfaceDim,
                             unfocusedTextColor = MaterialTheme.colorScheme.surfaceDim,
-                        )
+                        ),
+                        modifier = Modifier.focusRequester((focusRequesterApellido))
                     )
 
                     TextField(
                         value = telefono,
-                        onValueChange = {
-                            telefono = it
-                            viewModel.registerCelular(it)
+                        onValueChange = { newValue ->
+                            val filtered = newValue
+                                .filter { it.isDigit() }
+                                .take(10)
+
+                            val corrected = when {
+                                filtered.isEmpty() -> ""
+                                filtered.first() != '3' -> "3" +filtered.drop(1)
+                                else -> filtered
+                            }
+
+                            telefono = corrected
+                            viewModel.registerCelular(corrected)
                         },
                         label = { Text("Teléfono", color = MaterialTheme.colorScheme.surfaceDim) },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
@@ -148,7 +199,8 @@ fun PersonalData (
                             unfocusedIndicatorColor = MaterialTheme.colorScheme.surfaceDim,
                             focusedTextColor = MaterialTheme.colorScheme.surfaceDim,
                             unfocusedTextColor = MaterialTheme.colorScheme.surfaceDim,
-                        )
+                        ),
+                        modifier = Modifier.focusRequester(focusRequesterTelefono)
                     )
                 }
             }
