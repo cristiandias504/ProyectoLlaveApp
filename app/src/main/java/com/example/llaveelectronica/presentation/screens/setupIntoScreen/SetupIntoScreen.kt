@@ -111,33 +111,6 @@ fun SetupIntroScreen(
             .fillMaxSize()
             .padding(top = 70.dp),
     ) {
-//        Column() {
-//            Text(
-//                text = setupIntoScreenViewModel.nombre,
-//                fontWeight = FontWeight.Bold,
-//                color = MaterialTheme.colorScheme.surfaceDim,
-//                style = MaterialTheme.typography.titleLarge
-//            )
-//
-//            Spacer(modifier = Modifier.height(14.dp))
-//
-//            Text(
-//                text = setupIntoScreenViewModel.apellido,
-//                fontWeight = FontWeight.Bold,
-//                color = MaterialTheme.colorScheme.surfaceDim,
-//                style = MaterialTheme.typography.titleLarge
-//            )
-//
-//            Spacer(modifier = Modifier.height(14.dp))
-//
-//            Text(
-//                text = setupIntoScreenViewModel.celular,
-//                fontWeight = FontWeight.Bold,
-//                color = MaterialTheme.colorScheme.surfaceDim,
-//                style = MaterialTheme.typography.titleLarge
-//            )
-//        }
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -211,55 +184,30 @@ fun SetupIntroScreen(
 
                     SetupStep.PersonalData -> PersonalData(viewModel)
 
-                    SetupStep.Vehicle -> AddVehicle(
-                        valorSeleccionado = setupIntoScreenViewModel.marca,
-                        onValorSeleccionadoChange = { /* viewModel.onMarcaChange(it) */ }
-                    )
+                    SetupStep.Vehicle -> AddVehicle(viewModel)
 
-                    SetupStep.Completed -> Text(
-                        text = "Configuración completada",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 160.dp),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.titleLarge)
+                    SetupStep.Completed -> {
+                        viewModel.setupCompleted(true)
+                        Text(
+                            text = "Configuración completa",
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 160.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                 }
             }
         }
-
-//        Row() {
-//            Text(
-//                text = setupIntoScreenViewModel.stateButton.toString(),
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier.padding(top = 160.dp),
-//                color = MaterialTheme.colorScheme.onPrimary,
-//                style = MaterialTheme.typography.titleLarge)
-//
-//            Spacer(modifier = Modifier.width((16.dp)))
-//
-//            Text(
-//                text = setupIntoScreenViewModel.pin,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier.padding(top = 160.dp),
-//                color = MaterialTheme.colorScheme.onPrimary,
-//                style = MaterialTheme.typography.titleLarge)
-//
-//            Spacer(modifier = Modifier.width((16.dp)))
-//
-//
-//            Text(
-//                text = setupIntoScreenViewModel.pinConfirmation,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier.padding(top = 160.dp),
-//                color = MaterialTheme.colorScheme.onPrimary,
-//                style = MaterialTheme.typography.titleLarge)
-//        }
 
         // Botón
         Button(
             onClick = {
                 if (setupIntoScreenViewModel.permissionsDenied) {
                     openAppSettings(context)
-                } else {
+                } else if (setupIntoScreenViewModel.isSetupCompleted)
+                    onClick()
+                else {
                     viewModel.onNextClicked()
                 }
             },
@@ -276,6 +224,8 @@ fun SetupIntroScreen(
             Text(
                 text = if (setupIntoScreenViewModel.permissionsDenied)
                     "Ir a Ajustes"
+                else if (setupIntoScreenViewModel.isSetupCompleted)
+                    "Finalizar"
                 else
                     "Continuar",
                 color = Color.White,

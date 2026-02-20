@@ -34,8 +34,10 @@ data class SetupIntoDataClass(
     val celular: String = "",
     val datosCompletos: Boolean = false,
 
-    val marca: String = "",
-    val modelo: String = "",
+    val marca: String = "Seleccionar",
+    val modelo: String = "Seleccionar",
+    val marcasDisponibles: List<String> = emptyList(),
+    val modelosDisponibles: List<String> = emptyList(),
 
     val isSetupCompleted: Boolean = false
 )

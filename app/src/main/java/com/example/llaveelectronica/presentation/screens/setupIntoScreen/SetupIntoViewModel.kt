@@ -6,7 +6,15 @@ import androidx.lifecycle.ViewModel
 
 class SetupIntoViewModel : ViewModel() {
 
-    private val _setupIntoState = mutableStateOf(SetupIntoDataClass())
+    private val motorcycle = mapOf(
+        "KTM" to listOf("Duke 200 G1", "Duke 200 G2", "Duke 250 G1", "Duke 250 G2", "Duke 390 G1", "Duke 390 G3", "200 Duke", "1290 Super Duke"),
+        "Yamaha" to listOf("FZ 250", "MT-03", "R3"),
+        "Honda" to listOf("CB190R", "CBR 500R", "XRE 300")
+    )
+
+    private val _setupIntoState = mutableStateOf(SetupIntoDataClass(
+        marcasDisponibles = motorcycle.keys.toList()
+    ))
     val setupIntoState: State<SetupIntoDataClass> = _setupIntoState
 
     fun onNextClicked() {
@@ -17,7 +25,7 @@ class SetupIntoViewModel : ViewModel() {
             SetupStep.Authentication -> SetupStep.PersonalData
             SetupStep.PersonalData -> SetupStep.Vehicle
             SetupStep.Vehicle -> SetupStep.Completed
-            SetupStep.Completed -> SetupStep.Theme
+            SetupStep.Completed -> SetupStep.Completed
         }
 
         _setupIntoState.value = _setupIntoState.value.copy(
@@ -155,5 +163,30 @@ class SetupIntoViewModel : ViewModel() {
             && _setupIntoState.value.apellido.length >= 2
             && _setupIntoState.value.celular.length == 10) stateButton(true)
         else stateButton(false)
+    }
+
+    fun onMarcaSelected (marca: String) {
+        onModeloSelected("Seleccionar")
+
+        val modelos = motorcycle[marca] ?: emptyList()
+
+        _setupIntoState.value = _setupIntoState.value.copy(
+            marca = marca,
+            modelosDisponibles = modelos,
+            stateButton = false
+        )
+    }
+
+    fun onModeloSelected (modelo: String) {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            modelo = modelo,
+            stateButton = true
+        )
+    }
+
+    fun setupCompleted (completed: Boolean) {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            isSetupCompleted = completed
+        )
     }
 }

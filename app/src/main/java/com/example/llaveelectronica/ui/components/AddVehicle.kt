@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,14 +34,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.llaveelectronica.R
+import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 @Composable
 fun AddVehicle (
-    valorSeleccionado: String,
-    onValorSeleccionadoChange: (String) -> Unit
+    viewModel: SetupIntoViewModel,
 ) {
+
+    val addVehicleViewModel by viewModel.setupIntoState
+
+    val modelosConImagen = mapOf(
+        "Duke 200 G1" to R.mipmap.ktmduke200g1,
+        "Duke 390 G1" to R.mipmap.ktmduke390g1,
+        "Duke 390 G3" to R.mipmap.ktmduke390g3,
+    )
+
+    var expandedMarca by remember { mutableStateOf(false) }
+    var expandedModelo by remember { mutableStateOf(false) }
+
+    var modeloSeleccionado by remember { mutableStateOf("Seleccionar") }
+
+    LaunchedEffect(Unit) {
+        viewModel.stateButton(false)
+    }
+
     Box(
         modifier = Modifier
             //.fillMaxWidth()
@@ -48,11 +68,6 @@ fun AddVehicle (
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.TopCenter
     ) {
-        var expanded by remember { mutableStateOf(false) }
-
-        val marca = listOf("Ktm", "Yamaha", "Honda")
-        val modelo = listOf("390 Duke G3", "FZ 250", "Hero Hunk")
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -101,19 +116,21 @@ fun AddVehicle (
                         .fillMaxWidth()
                 ) {
 
-                    Box ( modifier = Modifier.padding(8.dp)){
+                    Box (
+                        modifier = Modifier.padding(8.dp)
+                    ){
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(16.dp))
                                 .background(Color(0xFF8FD3E8))
-                                .clickable { expanded = true }
+                                .clickable { expandedMarca = true }
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = valorSeleccionado,
+                                text = addVehicleViewModel.marca,
                                 color = Color.Black,
                                 style = MaterialTheme.typography.bodyLarge
                             )
@@ -127,16 +144,17 @@ fun AddVehicle (
 
                         // Menú desplegable
                         DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier.fillMaxWidth(0.9f) // ancho menor al recuadro
+                            expanded = expandedMarca,
+                            onDismissRequest = { expandedMarca = false }
                         ) {
-                            marca.forEach { opcion ->
+                            addVehicleViewModel.marcasDisponibles.forEach { marca ->
                                 DropdownMenuItem(
-                                    text = { Text(opcion) },
+                                    text = { Text(marca) },
                                     onClick = {
-                                        onValorSeleccionadoChange(opcion)
-                                        expanded = false
+                                        viewModel.stateButton(false)
+                                        viewModel.onMarcaSelected(marca)
+                                        expandedMarca = false
+                                        modeloSeleccionado = ""
                                     }
                                 )
                             }
@@ -149,13 +167,13 @@ fun AddVehicle (
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(16.dp))
                                 .background(Color(0xFF8FD3E8))
-                                .clickable { expanded = true }
+                                .clickable { expandedModelo = true }
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = valorSeleccionado,
+                                text = addVehicleViewModel.modelo,
                                 color = Color.Black,
                                 style = MaterialTheme.typography.bodyLarge
                             )
@@ -169,16 +187,16 @@ fun AddVehicle (
 
                         // Menú desplegable
                         DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier.fillMaxWidth(0.9f) // ancho menor al recuadro
+                            expanded = expandedModelo,
+                            onDismissRequest = { expandedModelo = false }
                         ) {
-                            modelo.forEach { opcion ->
+                            addVehicleViewModel.modelosDisponibles.forEach { modelo ->
                                 DropdownMenuItem(
-                                    text = { Text(opcion) },
+                                    text = { Text(modelo) },
                                     onClick = {
-                                        onValorSeleccionadoChange(opcion)
-                                        expanded = false
+                                        viewModel.onModeloSelected(modelo)
+                                        modeloSeleccionado = modelo
+                                        expandedModelo = false
                                     }
                                 )
                             }
@@ -189,11 +207,15 @@ fun AddVehicle (
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Image(
-                painter = painterResource(R.mipmap.ktm390),
-                contentDescription = null,
-                modifier = Modifier.size(160.dp)
-            )
+            val imagenSeleccionada = modelosConImagen[modeloSeleccionado]
+
+            if (imagenSeleccionada != null) {
+                Image(
+                    painter = painterResource(imagenSeleccionada),
+                    contentDescription = null,
+                    modifier = Modifier.size(160.dp)
+                )
+            }
         }
     }
 }
@@ -207,8 +229,7 @@ fun ViewAddVehicle(){
     LlaveElectronicaTheme {
         AppBackground {
             AddVehicle(
-                valorSeleccionado = "Ktm",
-                onValorSeleccionadoChange = {}
+                viewModel = viewModel(),
             )
         }
     }

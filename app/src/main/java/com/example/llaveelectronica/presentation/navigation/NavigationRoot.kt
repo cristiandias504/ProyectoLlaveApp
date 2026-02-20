@@ -8,6 +8,7 @@ import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIn
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntroScreen
 import com.example.llaveelectronica.presentation.screens.splashScreen.SplashScreen
 import com.example.llaveelectronica.presentation.screens.welcomeScreen.WelcomeScreen
+import com.example.llaveelectronica.presentation.screens.DataPresentationScreen
 
 @Composable
 fun NavigationRoot(setupIntoViewModel: SetupIntoViewModel) {
@@ -19,6 +20,7 @@ fun NavigationRoot(setupIntoViewModel: SetupIntoViewModel) {
     ) {
         composable("splash") { SplashScreen(navController) }
         composable("welcome") { WelcomeScreen(onStartClick = {navController.navigate("setupInto")} ) }
-        composable("setupInto") { SetupIntroScreen(onClick = {navController.navigate("splash")}, viewModel = setupIntoViewModel) }
+        composable("setupInto") { SetupIntroScreen(onClick = {navController.navigate("dataPresentation")}, viewModel = setupIntoViewModel) }
+        composable ("dataPresentation") { DataPresentationScreen(viewModel = setupIntoViewModel) }
     }
 }
