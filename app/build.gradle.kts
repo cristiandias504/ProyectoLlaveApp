@@ -76,9 +76,5 @@ dependencies {
     implementation ("androidx.compose.animation:animation:1.5.0")     // animaciones oficiales
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0")
     implementation("androidx.compose.material:material-icons-extended-android:1.7.8") // Iconos Material Design 3
-
-
-
-
-    //ksp(libs.dagger.hilt.compiler)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

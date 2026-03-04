@@ -3,8 +3,13 @@ package com.example.llaveelectronica.presentation.screens.setupIntoScreen
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.llaveelectronica.data.SetupRepository
+import kotlinx.coroutines.launch
 
-class SetupIntoViewModel : ViewModel() {
+class SetupIntoViewModel(
+    private val repository: SetupRepository
+): ViewModel() {
 
     private val motorcycle = mapOf(
         "KTM" to listOf("Duke 200 G1", "Duke 200 G2", "Duke 250 G1", "Duke 250 G2", "Duke 390 G1", "Duke 390 G3", "200 Duke", "1290 Super Duke"),
@@ -16,6 +21,31 @@ class SetupIntoViewModel : ViewModel() {
         marcasDisponibles = motorcycle.keys.toList()
     ))
     val setupIntoState: State<SetupIntoDataClass> = _setupIntoState
+
+    init {
+        // Cargar datos del DataStore al iniciar
+        viewModelScope.launch {
+            repository.configFlow.collect { savedConfig ->
+                _setupIntoState.value = _setupIntoState.value.copy(
+                    autoTheme = savedConfig.autoTheme,
+                    selectedThemeDark = savedConfig.selectedThemeDark,
+                    pin = savedConfig.pin,
+                    nombre = savedConfig.nombre,
+                    apellido = savedConfig.apellido,
+                    celular = savedConfig.celular,
+                    marca = savedConfig.marca,
+                    modelo = savedConfig.modelo,
+                    isSetupCompleted = savedConfig.isSetupCompleted
+                )
+            }
+        }
+    }
+
+    fun saveSetupData() {
+        viewModelScope.launch {
+            repository.saveConfig(_setupIntoState.value)
+        }
+    }
 
     fun onNextClicked() {
         val nextStep = when (_setupIntoState.value.currentStep) {
@@ -184,9 +214,16 @@ class SetupIntoViewModel : ViewModel() {
         )
     }
 
+//    fun setupCompleted (completed: Boolean) {
+//        _setupIntoState.value = _setupIntoState.value.copy(
+//            isSetupCompleted = completed
+//        )
+//    }
+
     fun setupCompleted (completed: Boolean) {
         _setupIntoState.value = _setupIntoState.value.copy(
             isSetupCompleted = completed
         )
+        if (completed) saveSetupData() // Guarda al finalizar el flujo
     }
 }

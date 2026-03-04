@@ -7,7 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.llaveelectronica.data.SetupRepository
 import com.example.llaveelectronica.presentation.navigation.NavigationRoot
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.components.AppBackground
@@ -23,7 +27,20 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            val setupIntoViewModel: SetupIntoViewModel = viewModel()
+            //val setupIntoViewModel: SetupIntoViewModel = viewModel()
+
+            val context = LocalContext.current
+            val repository = SetupRepository(context)
+
+            val setupIntoViewModel: SetupIntoViewModel = viewModel(
+                factory = viewModelFactory {
+                    initializer {
+                        SetupIntoViewModel(repository)
+                    }
+                }
+            )
+
+
             val mainActivityViewModel by setupIntoViewModel.setupIntoState
 
             LlaveElectronicaTheme(

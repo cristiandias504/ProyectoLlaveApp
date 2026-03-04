@@ -205,9 +205,10 @@ fun SetupIntroScreen(
             onClick = {
                 if (setupIntoScreenViewModel.permissionsDenied) {
                     openAppSettings(context)
-                } else if (setupIntoScreenViewModel.isSetupCompleted)
+                } else if (setupIntoScreenViewModel.isSetupCompleted) {
+                    viewModel.saveSetupData()
                     onClick()
-                else {
+                } else {
                     viewModel.onNextClicked()
                 }
             },

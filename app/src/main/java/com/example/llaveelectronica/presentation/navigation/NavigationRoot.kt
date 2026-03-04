@@ -18,7 +18,7 @@ fun NavigationRoot(setupIntoViewModel: SetupIntoViewModel) {
         navController = navController,
         startDestination = "splash"
     ) {
-        composable("splash") { SplashScreen(navController) }
+        composable("splash") { SplashScreen(navController, setupIntoViewModel) }
         composable("welcome") { WelcomeScreen(onStartClick = {navController.navigate("setupInto")} ) }
         composable("setupInto") { SetupIntroScreen(onClick = {navController.navigate("dataPresentation")}, viewModel = setupIntoViewModel) }
         composable ("dataPresentation") { DataPresentationScreen(viewModel = setupIntoViewModel) }
