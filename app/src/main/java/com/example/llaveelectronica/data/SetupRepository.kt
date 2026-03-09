@@ -11,6 +11,7 @@ class SetupRepository(private val context: Context) {
     private val AUTO_THEME = booleanPreferencesKey("auto_theme")
     private val SELECTED_THEME_DARK = booleanPreferencesKey("selected_theme_dark")
     private val PIN = stringPreferencesKey("pin")
+    private val AUTHENTICATION_BIOMETRIC = booleanPreferencesKey("authentication_biometric")
     private  val NOMBRE = stringPreferencesKey("nombre")
     private  val APELLIDO = stringPreferencesKey("apellido")
     private val CELULAR = stringPreferencesKey("celular")
@@ -24,6 +25,7 @@ class SetupRepository(private val context: Context) {
             prefs[AUTO_THEME] = config.autoTheme
             prefs[SELECTED_THEME_DARK] = config.selectedThemeDark
             prefs[PIN] = config.pin
+            prefs[AUTHENTICATION_BIOMETRIC] = config.isAuthenticationBiometricActive
             prefs[NOMBRE] = config.nombre
             prefs[APELLIDO] = config.apellido
             prefs[CELULAR] = config.celular
@@ -39,6 +41,7 @@ class SetupRepository(private val context: Context) {
                 autoTheme = prefs[AUTO_THEME] ?: false,
                 selectedThemeDark = prefs[SELECTED_THEME_DARK] ?: true,
                 pin = prefs[PIN] ?: "",
+                isAuthenticationBiometricActive = prefs[AUTHENTICATION_BIOMETRIC] ?: false,
                 nombre = prefs[NOMBRE] ?: "",
                 apellido = prefs[APELLIDO] ?: "",
                 celular = prefs[CELULAR] ?: "",

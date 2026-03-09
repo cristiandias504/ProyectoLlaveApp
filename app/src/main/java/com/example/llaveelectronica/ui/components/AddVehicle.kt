@@ -31,11 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.llaveelectronica.R
+import com.example.llaveelectronica.data.SetupRepository
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
@@ -226,10 +227,15 @@ fun AddVehicle (
 
 @Composable
 fun ViewAddVehicle(){
+
+    val context = LocalContext.current.applicationContext
+    val repository = remember { SetupRepository(context) }
+    val vm = remember { SetupIntoViewModel(repository) }
+
     LlaveElectronicaTheme {
         AppBackground {
             AddVehicle(
-                viewModel = viewModel(),
+                viewModel = vm,
             )
         }
     }

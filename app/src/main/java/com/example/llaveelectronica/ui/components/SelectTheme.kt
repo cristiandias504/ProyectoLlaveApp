@@ -30,9 +30,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.llaveelectronica.data.SetupRepository
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
@@ -237,10 +238,15 @@ fun SelectTheme (
 )
 @Composable
 fun ViewSelectTheme(){
+
+    val context = LocalContext.current.applicationContext
+    val repository = remember { SetupRepository(context) }
+    val vm = remember { SetupIntoViewModel(repository) }
+
     LlaveElectronicaTheme {
         AppBackground {
             SelectTheme(
-                viewModel = viewModel()
+                viewModel = vm
             )
         }
     }

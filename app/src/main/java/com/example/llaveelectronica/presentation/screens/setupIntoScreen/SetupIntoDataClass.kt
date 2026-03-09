@@ -5,6 +5,7 @@ sealed class SetupStep {
     object Theme : SetupStep()
     object Permissions : SetupStep()
     object Authentication : SetupStep()
+    object AuthenticationBiometric : SetupStep()
     object PersonalData : SetupStep()
     object Vehicle : SetupStep()
     object Completed : SetupStep()
@@ -28,6 +29,7 @@ data class SetupIntoDataClass(
 
     val pinError: Boolean = false,
 
+    val isAuthenticationBiometricActive: Boolean = false,
 
     val nombre: String = "",
     val apellido: String = "",

@@ -30,6 +30,7 @@ class SetupIntoViewModel(
                     autoTheme = savedConfig.autoTheme,
                     selectedThemeDark = savedConfig.selectedThemeDark,
                     pin = savedConfig.pin,
+                    isAuthenticationBiometricActive = savedConfig.isAuthenticationBiometricActive,
                     nombre = savedConfig.nombre,
                     apellido = savedConfig.apellido,
                     celular = savedConfig.celular,
@@ -52,7 +53,8 @@ class SetupIntoViewModel(
             SetupStep.Welcome -> SetupStep.Theme
             SetupStep.Theme -> SetupStep.Permissions
             SetupStep.Permissions -> SetupStep.Authentication
-            SetupStep.Authentication -> SetupStep.PersonalData
+            SetupStep.Authentication -> SetupStep.AuthenticationBiometric
+            SetupStep.AuthenticationBiometric -> SetupStep.PersonalData
             SetupStep.PersonalData -> SetupStep.Vehicle
             SetupStep.Vehicle -> SetupStep.Completed
             SetupStep.Completed -> SetupStep.Completed
@@ -73,11 +75,12 @@ class SetupIntoViewModel(
     private fun calculateProgress(step: SetupStep): Float {
         return when (step) {
             SetupStep.Welcome -> 0f
-            SetupStep.Theme -> 0.2f
-            SetupStep.Permissions -> 0.4f
-            SetupStep.Authentication -> 0.6f
-            SetupStep.PersonalData -> 0.8f
-            SetupStep.Vehicle -> 1f
+            SetupStep.Theme -> 0.1f
+            SetupStep.Permissions -> 0.2f
+            SetupStep.Authentication -> 0.3f
+            SetupStep.AuthenticationBiometric -> 0.4f
+            SetupStep.PersonalData -> 0.5f
+            SetupStep.Vehicle -> 0.6f
             SetupStep.Completed -> 1f
         }
     }
@@ -167,6 +170,12 @@ class SetupIntoViewModel(
         }
     }
 
+    fun registerAuthenticationBiometric (isActive: Boolean) {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            isAuthenticationBiometricActive = isActive
+        )
+    }
+
     fun registerNombre (nombre: String) {
         _setupIntoState.value = _setupIntoState.value.copy(
             nombre = nombre
@@ -213,12 +222,6 @@ class SetupIntoViewModel(
             stateButton = true
         )
     }
-
-//    fun setupCompleted (completed: Boolean) {
-//        _setupIntoState.value = _setupIntoState.value.copy(
-//            isSetupCompleted = completed
-//        )
-//    }
 
     fun setupCompleted (completed: Boolean) {
         _setupIntoState.value = _setupIntoState.value.copy(

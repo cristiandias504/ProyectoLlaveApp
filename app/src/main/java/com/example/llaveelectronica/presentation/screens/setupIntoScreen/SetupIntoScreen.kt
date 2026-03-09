@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +40,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,16 +48,16 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.llaveelectronica.R
+import com.example.llaveelectronica.data.SetupRepository
 import com.example.llaveelectronica.ui.components.AddVehicle
 import com.example.llaveelectronica.ui.components.AppBackground
 import com.example.llaveelectronica.ui.components.Authentication
+import com.example.llaveelectronica.ui.components.AuthenticationBiometric
 import com.example.llaveelectronica.ui.components.Permissions
 import com.example.llaveelectronica.ui.components.PersonalData
 import com.example.llaveelectronica.ui.components.SelectTheme
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
-
 
 // Lanzar ajustes de la aplicación para aceptar manualmente los permisos
 fun openAppSettings(context: Context) {
@@ -172,7 +174,8 @@ fun SetupIntroScreen(
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(top = 160.dp),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.titleLarge
+                            style = MaterialTheme.typography.titleLarge,
+                            textAlign = TextAlign.Center
                         )
                     }
 
@@ -181,6 +184,8 @@ fun SetupIntroScreen(
                     SetupStep.Permissions -> Permissions(viewModel)
 
                     SetupStep.Authentication -> Authentication(viewModel, isActive = true)
+
+                    SetupStep.AuthenticationBiometric -> AuthenticationBiometric(viewModel)
 
                     SetupStep.PersonalData -> PersonalData(viewModel)
 
@@ -205,8 +210,8 @@ fun SetupIntroScreen(
             onClick = {
                 if (setupIntoScreenViewModel.permissionsDenied) {
                     openAppSettings(context)
-                } else if (setupIntoScreenViewModel.isSetupCompleted) {
-                    viewModel.saveSetupData()
+                }
+                else if (setupIntoScreenViewModel.isSetupCompleted) {
                     onClick()
                 } else {
                     viewModel.onNextClicked()
@@ -225,6 +230,9 @@ fun SetupIntroScreen(
             Text(
                 text = if (setupIntoScreenViewModel.permissionsDenied)
                     "Ir a Ajustes"
+                else if(setupIntoScreenViewModel.currentStep == SetupStep.AuthenticationBiometric)
+                    if (!setupIntoScreenViewModel.isAuthenticationBiometricActive) "Saltar"
+                    else "Continuar"
                 else if (setupIntoScreenViewModel.isSetupCompleted)
                     "Finalizar"
                 else
@@ -241,11 +249,16 @@ fun SetupIntroScreen(
 )
 @Composable
 fun ViewSetupIntroScreen(){
+
+    val context = LocalContext.current.applicationContext
+    val repository = remember { SetupRepository(context) }
+    val vm = remember { SetupIntoViewModel(repository) }
+
     LlaveElectronicaTheme{
         AppBackground {
             SetupIntroScreen(
                 onClick = {},
-                viewModel = viewModel(),
+                viewModel = vm,
             )
         }
     }

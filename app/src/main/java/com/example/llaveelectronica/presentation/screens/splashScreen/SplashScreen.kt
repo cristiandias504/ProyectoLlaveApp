@@ -21,8 +21,9 @@ fun SplashScreen(
 //                launchSingleTop = true
 //            }
 
-            // Decidimos el destino basado en isSetupCompleted
-            val destination = if (state.isSetupCompleted) "dataPresentation" else "welcome"
+            // Se decide el destino basado en isSetupCompleted
+            //val destination = if (state.isSetupCompleted) "dataPresentation" else "welcome"
+            val destination = if (state.isSetupCompleted) "authentication" else "welcome"
 
             navController.navigate(destination) {
                 popUpTo("splash") { inclusive = true }

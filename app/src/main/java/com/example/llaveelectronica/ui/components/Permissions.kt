@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.llaveelectronica.data.SetupRepository
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
@@ -117,10 +118,15 @@ fun Permissions(
 
 @Composable
 fun ViewPermissions(){
+
+    val context = LocalContext.current.applicationContext
+    val repository = remember { SetupRepository(context) }
+    val vm = remember { SetupIntoViewModel(repository) }
+
     LlaveElectronicaTheme {
         AppBackground {
             Permissions(
-                viewModel = viewModel()
+                viewModel = vm
             )
         }
     }

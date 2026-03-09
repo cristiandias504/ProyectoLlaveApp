@@ -1,13 +1,13 @@
 package com.example.llaveelectronica
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -17,7 +17,7 @@ import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIn
 import com.example.llaveelectronica.ui.components.AppBackground
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +27,6 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            //val setupIntoViewModel: SetupIntoViewModel = viewModel()
-
             val context = LocalContext.current
             val repository = SetupRepository(context)
 
@@ -39,7 +37,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             )
-
 
             val mainActivityViewModel by setupIntoViewModel.setupIntoState
 

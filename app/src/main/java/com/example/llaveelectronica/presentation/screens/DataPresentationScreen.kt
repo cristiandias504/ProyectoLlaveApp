@@ -14,12 +14,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.llaveelectronica.data.SetupRepository
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.components.AppBackground
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
@@ -209,6 +211,29 @@ fun DataPresentationScreen(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
+                    text = "Autenticación Biometrica: ",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.surfaceDim,
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                Text(
+                    text = dataPresentationViewModel.isAuthenticationBiometricActive.toString(),
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.surfaceDim,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+
+            Spacer(modifier = Modifier.height(36.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
                     text = "Marca: ",
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.surfaceDim,
@@ -260,9 +285,16 @@ fun DataPresentationScreen(
 )
 @Composable
 fun ViewDataPresentationScreen(){
+
+    val context = LocalContext.current.applicationContext
+    val repository = remember { SetupRepository(context) }
+    val vm = remember { SetupIntoViewModel(repository) }
+
     LlaveElectronicaTheme{
         AppBackground {
-            DataPresentationScreen(viewModel = viewModel())
+            DataPresentationScreen(
+                viewModel = vm
+            )
         }
     }
 }
