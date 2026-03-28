@@ -62,7 +62,6 @@ fun AuthenticationBiometric(
     val promptInfo = remember {
         BiometricPrompt.PromptInfo.Builder()
             .setTitle("Autenticación biométrica")
-            //.setSubtitle("Confirma tu huella para activar la seguridad")
             .setNegativeButtonText("Cancelar")
             .build()
     }
@@ -77,18 +76,7 @@ fun AuthenticationBiometric(
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
                     viewModel.registerAuthenticationBiometric(true)
-                    //viewModel.onNextClicked()
                 }
-
-                //override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                //    super.onAuthenticationError(errorCode, errString)
-                //    Toast.makeText(context, "Error: $errString", Toast.LENGTH_SHORT).show()
-                //}
-
-                //override fun onAuthenticationFailed() {
-                //    super.onAuthenticationFailed()
-                //    Toast.makeText(context, "Autenticación fallida", Toast.LENGTH_SHORT).show()
-                //}
             }
         )
     }

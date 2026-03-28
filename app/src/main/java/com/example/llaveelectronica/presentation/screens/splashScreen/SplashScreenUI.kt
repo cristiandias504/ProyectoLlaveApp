@@ -29,6 +29,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreenUI(
     modifier: Modifier = Modifier,
+    isConfig: Boolean,
     onAnimationFinished: () -> Unit = {}
 ) {
 
@@ -54,41 +55,81 @@ fun SplashScreenUI(
     }
 
     val startSize = 200.dp
-    val endSize = 180.dp
 
-    val logoSize by animateDpAsState(
-        targetValue = if (animate) endSize else startSize,
-        animationSpec = tween(
-            durationMillis = 800,
-            easing = FastOutSlowInEasing
-        ),
-        label = "LogoSize"
-    )
+    if (isConfig){
+        val endSize = 128.dp
 
-    val logoOffsetY by animateDpAsState(
-        targetValue = if (animate) {
-            -(screenHeight / 2) + 166.dp + (endSize / 2)
-        } else {
-            0.dp
-        },
-        animationSpec = tween(
-            durationMillis = 800,
-            easing = FastOutSlowInEasing
-        ),
-        label = "LogoOffset"
-    )
-
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.mipmap.logo),
-            contentDescription = "Logo",
-            modifier = Modifier
-                .size(logoSize)
-                .offset(y = logoOffsetY)
+        val logoSize by animateDpAsState(
+            targetValue = if (animate) endSize else startSize,
+            animationSpec = tween(
+                durationMillis = 800,
+                easing = FastOutSlowInEasing
+            ),
+            label = "LogoSize"
         )
+
+        val logoOffsetY by animateDpAsState(
+            targetValue = if (animate) {
+                -(screenHeight / 2) + 70.dp + (endSize / 2)
+            } else {
+                0.dp
+            },
+            animationSpec = tween(
+                durationMillis = 800,
+                easing = FastOutSlowInEasing
+            ),
+            label = "LogoOffset"
+        )
+
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.mipmap.logo),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .size(logoSize)
+                    .offset(y = logoOffsetY)
+            )
+        }
+    } else {
+        val endSize = 180.dp
+
+        val logoSize by animateDpAsState(
+            targetValue = if (animate) endSize else startSize,
+            animationSpec = tween(
+                durationMillis = 800,
+                easing = FastOutSlowInEasing
+            ),
+            label = "LogoSize"
+        )
+
+        val logoOffsetY by animateDpAsState(
+            targetValue = if (animate) {
+                -(screenHeight / 2) + 166.dp + (endSize / 2)
+            } else {
+                0.dp
+            },
+            animationSpec = tween(
+                durationMillis = 800,
+                easing = FastOutSlowInEasing
+            ),
+            label = "LogoOffset"
+        )
+
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.mipmap.logo),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .size(logoSize)
+                    .offset(y = logoOffsetY)
+            )
+        }
     }
 }
 
@@ -99,7 +140,7 @@ fun SplashScreenUI(
 fun ViewSplashScreenUI(){
     LlaveElectronicaTheme{
         AppBackground {
-            SplashScreenUI()
+            SplashScreenUI(isConfig = false)
         }
     }
 }

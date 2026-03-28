@@ -41,6 +41,8 @@ data class SetupIntoDataClass(
     val marcasDisponibles: List<String> = emptyList(),
     val modelosDisponibles: List<String> = emptyList(),
 
-    val isSetupCompleted: Boolean = false
+    val isSetupCompleted: Boolean = false,
+    val isPinComplete: Boolean = true,
+    val isPinValid: Boolean = false
 )
 

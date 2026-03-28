@@ -51,7 +51,6 @@ import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIn
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 import kotlinx.coroutines.delay
 
-
 @Composable
 fun Authentication (
     viewModel: SetupIntoViewModel,
@@ -64,6 +63,18 @@ fun Authentication (
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val offsetX = remember { Animatable(0f) }
+    val pinError = authenticationViewModel.pinError
+
+    LaunchedEffect(pinError) {
+        if (pinError) {
+            repeat(4) {
+                offsetX.animateTo(-20f, tween(50))
+                offsetX.animateTo(20f, tween(50))
+            }
+            offsetX.animateTo(0f)
+        }
+    }
 
     LaunchedEffect(isActive) {
         if (isActive) {
@@ -91,21 +102,35 @@ fun Authentication (
                 value = pin,
                 onValueChange = { newValue ->
 
-                    val filtered = newValue.filter { it.isDigit() }.take(4)
+                    if (!authenticationViewModel.isSetupCompleted) {
 
-                    when {
-                        filtered.length > pin.length -> {
-                            val newDigit = filtered.last()
-                            viewModel.registerPin(confirmation = confirmation, digit = newDigit.toString())
+                        val filtered = newValue.filter { it.isDigit() }.take(4)
+
+                        when {
+                            filtered.length > pin.length -> {
+                                val newDigit = filtered.last()
+                                viewModel.registerPin(
+                                    confirmation = confirmation,
+                                    digit = newDigit.toString()
+                                )
+                            }
+
+                            filtered.length < pin.length -> {
+                                viewModel.registerPin(confirmation = confirmation, digit = "D")
+                            }
                         }
-                        filtered.length < pin.length -> {
-                            viewModel.registerPin(confirmation = confirmation, digit = "D")
-                        }
+
+                        pin = filtered
+                        if (pin.length == 4) pin = ""
+
+                    } else {
+
+                        val filtered = newValue.filter { it.isDigit() }.take(4)
+                        pin = filtered
+
+                        viewModel.validatePin(pin)
+
                     }
-
-                    pin = filtered
-
-                    if (pin.length == 4) pin = ""
                 },
 
                 modifier = Modifier
@@ -134,19 +159,6 @@ fun Authentication (
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            val offsetX = remember { Animatable(0f) }
-            val pinError = authenticationViewModel.pinError
-
-            LaunchedEffect(pinError) {
-                if (pinError) {
-                    repeat(4) {
-                        offsetX.animateTo(-20f, tween(50))
-                        offsetX.animateTo(20f, tween(50))
-                    }
-                    offsetX.animateTo(0f)
-                }
-            }
-
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
@@ -156,7 +168,6 @@ fun Authentication (
                         focusRequester.requestFocus()
                         keyboardController?.show()
                         pin = ""
-                        viewModel.registerPin(confirmation = confirmation, digit = "R")
                     }
             ) {
                 Box(

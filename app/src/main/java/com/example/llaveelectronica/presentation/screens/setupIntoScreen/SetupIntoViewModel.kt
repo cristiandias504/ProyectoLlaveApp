@@ -229,4 +229,36 @@ class SetupIntoViewModel(
         )
         if (completed) saveSetupData() // Guarda al finalizar el flujo
     }
+
+    fun validatePin (pin: String) {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            pinError = false
+        )
+
+        if (pin.length == 4) {
+            _setupIntoState.value = _setupIntoState.value.copy(
+                isPinComplete = true
+            )
+        } else {
+            _setupIntoState.value = _setupIntoState.value.copy(
+                isPinComplete = false
+            )
+        }
+
+        if (pin == _setupIntoState.value.pin) {
+            _setupIntoState.value = _setupIntoState.value.copy(
+                isPinValid = true
+            )
+        } else {
+            _setupIntoState.value = _setupIntoState.value.copy(
+                isPinValid = false
+            )
+        }
+    }
+
+    fun validatePinFail () {
+        _setupIntoState.value = _setupIntoState.value.copy(
+            pinError = true
+        )
+    }
 }

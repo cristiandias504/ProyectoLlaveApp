@@ -44,7 +44,7 @@ fun WelcomeScreenUI(
 ) {
     var animate by remember { mutableStateOf(false) }
 
-    // Avisar cuando la animación terminó
+    // Avisa cuando la animación terminó
     LaunchedEffect(animate) {
         if (animate) {
             delay(600) // duración de la animación

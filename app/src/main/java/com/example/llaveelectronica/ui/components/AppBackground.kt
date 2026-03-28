@@ -24,15 +24,6 @@ fun AppBackground(content: @Composable () -> Unit) {
                     )
                 )
             ),
-//            .background(
-//                brush = Brush.verticalGradient(
-//                    colorStops = arrayOf(
-//                        0.0f to MaterialTheme.colorScheme.primary,
-//                        0.10f to MaterialTheme.colorScheme.primary,
-//                        0.65f to MaterialTheme.colorScheme.onPrimary
-//                    )
-//                )
-//            ),
     ) {
         content ()
     }
