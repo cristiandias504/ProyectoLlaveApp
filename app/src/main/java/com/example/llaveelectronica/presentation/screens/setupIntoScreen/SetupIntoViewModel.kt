@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.llaveelectronica.data.SetupRepository
+import com.example.llaveelectronica.data.repository.SetupRepository
 import kotlinx.coroutines.launch
 
 class SetupIntoViewModel(

@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.example.llaveelectronica.R
-import com.example.llaveelectronica.data.SetupRepository
+import com.example.llaveelectronica.data.repository.SetupRepository
 import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIntoViewModel
 import com.example.llaveelectronica.ui.components.AppBackground
 import com.example.llaveelectronica.ui.components.Authentication
@@ -90,6 +90,8 @@ fun AuthenticationScreen(
 
     // Verificar hardware y datos biométricos
     LaunchedEffect(Unit) {
+
+        viewModel.validatePin("1")
 
         val result = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
 
@@ -158,31 +160,37 @@ fun AuthenticationScreen(
                 textAlign = TextAlign.Center
             )
 
-            if (!optionPin) {
-                Spacer(modifier = Modifier.height(200.dp))
-                Icon(
-                    imageVector = Icons.Filled.Fingerprint,
-                    contentDescription = "Authentication fingerprint",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clickable {
-                            when (canAuthenticate) {
-                                true -> biometricPrompt?.authenticate(promptInfo)
-                                false -> Toast.makeText(
-                                    context,
-                                    "Biometría no disponible",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+            if (authenticationScreenViewModel.isAuthenticationBiometricActive) {
+                if (!optionPin) {
+                    viewModel.validatePin("0000")
+                    Spacer(modifier = Modifier.height(200.dp))
+                    Icon(
+                        imageVector = Icons.Filled.Fingerprint,
+                        contentDescription = "Authentication fingerprint",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clickable {
+                                when (canAuthenticate) {
+                                    true -> biometricPrompt?.authenticate(promptInfo)
+                                    false -> Toast.makeText(
+                                        context,
+                                        "Biometría no disponible",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
 
-                                null -> Toast.makeText(
-                                    context,
-                                    "Verificando biometría...",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                    null -> Toast.makeText(
+                                        context,
+                                        "Verificando biometría...",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
-                        }
-                )
+                    )
+                } else {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Authentication(viewModel, isActive = true)
+                }
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
                 Authentication(viewModel, isActive = true)
@@ -192,11 +200,19 @@ fun AuthenticationScreen(
         // Botón
         Button(
             onClick = {
-                if (!optionPin) {
-                    optionPin = true
-                    viewModel.validatePin("1")
-                }
-                else {
+                if (authenticationScreenViewModel.isAuthenticationBiometricActive){
+                    if (!optionPin) {
+                        optionPin = true
+                        viewModel.validatePin("1")
+                    }
+                    else {
+                        if (authenticationScreenViewModel.isPinValid) {
+                            onClick()
+                        } else {
+                            viewModel.validatePinFail()
+                        }
+                    }
+                } else {
                     if (authenticationScreenViewModel.isPinValid) {
                         onClick()
                     } else {
@@ -216,7 +232,9 @@ fun AuthenticationScreen(
         ) {
             Text(
                 text =
-                    if (!optionPin) "Continuar con pin" else "Ingresar",
+                    if (authenticationScreenViewModel.isAuthenticationBiometricActive){
+                        if (!optionPin) "Continuar con pin" else "Ingresar"
+                    } else "Ingresar",
                 color = Color.White,
                 fontSize = 16.sp
             )

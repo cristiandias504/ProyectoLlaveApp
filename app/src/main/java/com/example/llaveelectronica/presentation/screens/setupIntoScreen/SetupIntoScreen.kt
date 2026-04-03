@@ -49,7 +49,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.llaveelectronica.R
-import com.example.llaveelectronica.data.SetupRepository
+import com.example.llaveelectronica.data.repository.SetupRepository
 import com.example.llaveelectronica.ui.components.AddVehicle
 import com.example.llaveelectronica.ui.components.AppBackground
 import com.example.llaveelectronica.ui.components.Authentication

@@ -27,7 +27,7 @@
         android:theme="@style/Theme.LlaveElectronica">
 
         <service
-            android:name=".ServicioConexion"
+            android:name=".data.service.ConnectionService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="connectedDevice" >

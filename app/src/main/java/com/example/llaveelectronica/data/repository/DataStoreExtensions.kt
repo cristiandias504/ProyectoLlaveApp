@@ -1,4 +1,4 @@
-package com.example.llaveelectronica.data
+package com.example.llaveelectronica.data.repository
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
