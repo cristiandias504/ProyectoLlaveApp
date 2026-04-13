@@ -179,7 +179,7 @@ fun SetupIntroScreen(
                         )
                     }
 
-                    SetupStep.Theme -> SelectTheme(viewModel)
+                    SetupStep.SelectTheme -> SelectTheme(viewModel)
 
                     SetupStep.Permissions -> Permissions(viewModel)
 
@@ -189,7 +189,7 @@ fun SetupIntroScreen(
 
                     SetupStep.PersonalData -> PersonalData(viewModel)
 
-                    SetupStep.Vehicle -> AddVehicle(viewModel)
+                    SetupStep.AddVehicle -> AddVehicle(viewModel)
 
                     SetupStep.Completed -> {
                         viewModel.setupCompleted(true)

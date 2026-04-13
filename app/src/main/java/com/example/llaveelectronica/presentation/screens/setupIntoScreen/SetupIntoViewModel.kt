@@ -50,13 +50,13 @@ class SetupIntoViewModel(
 
     fun onNextClicked() {
         val nextStep = when (_setupIntoState.value.currentStep) {
-            SetupStep.Welcome -> SetupStep.Theme
-            SetupStep.Theme -> SetupStep.Permissions
+            SetupStep.Welcome -> SetupStep.SelectTheme
+            SetupStep.SelectTheme -> SetupStep.Permissions
             SetupStep.Permissions -> SetupStep.Authentication
             SetupStep.Authentication -> SetupStep.AuthenticationBiometric
             SetupStep.AuthenticationBiometric -> SetupStep.PersonalData
-            SetupStep.PersonalData -> SetupStep.Vehicle
-            SetupStep.Vehicle -> SetupStep.Completed
+            SetupStep.PersonalData -> SetupStep.AddVehicle
+            SetupStep.AddVehicle -> SetupStep.Completed
             SetupStep.Completed -> SetupStep.Completed
         }
 
@@ -75,12 +75,12 @@ class SetupIntoViewModel(
     private fun calculateProgress(step: SetupStep): Float {
         return when (step) {
             SetupStep.Welcome -> 0f
-            SetupStep.Theme -> 0.1f
+            SetupStep.SelectTheme -> 0.1f
             SetupStep.Permissions -> 0.2f
             SetupStep.Authentication -> 0.3f
             SetupStep.AuthenticationBiometric -> 0.4f
             SetupStep.PersonalData -> 0.5f
-            SetupStep.Vehicle -> 0.6f
+            SetupStep.AddVehicle -> 0.6f
             SetupStep.Completed -> 1f
         }
     }
@@ -111,7 +111,7 @@ class SetupIntoViewModel(
     fun registerPin(confirmation: Boolean, digit: String) {
         if (!confirmation){
             if (digit == "D") {
-                // Eliminar el ultimo dígito
+                // Eliminar el último dígito
                 if (_setupIntoState.value.pin.isNotEmpty()) {
                     _setupIntoState.value = _setupIntoState.value.copy(
                         pin = _setupIntoState.value.pin.dropLast(1)
@@ -136,7 +136,7 @@ class SetupIntoViewModel(
             }
         } else {
             if (digit == "D") {
-                // Eliminar el ultimo dígito
+                // Eliminar el último dígito
                 if (_setupIntoState.value.pin.isNotEmpty()) {
                     _setupIntoState.value = _setupIntoState.value.copy(
                         pinConfirmation = _setupIntoState.value.pin.dropLast(1)

@@ -2,12 +2,14 @@ package com.example.llaveelectronica.presentation.screens.setupIntoScreen
 
 sealed class SetupStep {
     object Welcome : SetupStep()
-    object Theme : SetupStep()
+    object SelectTheme : SetupStep()
     object Permissions : SetupStep()
     object Authentication : SetupStep()
     object AuthenticationBiometric : SetupStep()
     object PersonalData : SetupStep()
-    object Vehicle : SetupStep()
+    object AddVehicle : SetupStep()
+    //object PairDevice: SetupStep()
+    //object PairDeviceAuthentication : SetupStep()
     object Completed : SetupStep()
 }
 

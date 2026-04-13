@@ -11,7 +11,7 @@ class ProcesadorDatos {
     var claveDinamicaDescifrada: IntArray = IntArray(5)
 
     fun procesarClaveInical(mensaje: String): String {
-        //Validar la longitud, debe tener 15 caracteres para ser valido
+        //Validar la longitud, debe tener 15 caracteres para ser válido
         if (mensaje.length != 15) {
             return "Tamaño de calve inicial no valido: ${mensaje.length}"
         }
@@ -19,7 +19,7 @@ class ProcesadorDatos {
             return "La clave inicial contiene caracteres no numéricos"
         }
 
-        //Convertir a un array que almancena cada numero
+        //Convertir a un array que almacena cada numero
         val digitos = IntArray(mensaje.length) { i ->
             mensaje[i].digitToInt()
         }
@@ -42,12 +42,12 @@ class ProcesadorDatos {
 
         Log.d("Clave Inicial", clave[0].toString())
 
-        //Si la conversion es correcta, retorna 200 para iniciar el intercambio de claves dinamicas
+        //Si la conversion es correcta, retorna 200 para iniciar el intercambio de claves dinámicas
         return "200"
     }
 
     fun procesarClaveDinamica(mensaje: String): String {
-        //Validar la longitud, debe tener 5 caracteres para ser valido
+        //Validar la longitud, debe tener 5 caracteres para ser válido
         if (mensaje.length != 5) {
             return "Tamaño de clave dinamica no valido ${mensaje.length}"
         }

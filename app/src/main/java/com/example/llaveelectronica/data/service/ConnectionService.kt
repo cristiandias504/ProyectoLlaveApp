@@ -58,7 +58,7 @@ class ConnectionService: Service() {
     private val receptorMensaje = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val mensaje = intent?.getStringExtra("Mensaje") ?: "Sin mensaje"
-            Log.d(TAG, "Desde MainActivity: $mensaje")
+            //Log.d(TAG, "Desde MainActivity: $mensaje")
 
             when (mensaje) {
                 "Verificación de estado" -> enviarBroadcast("Respuesta Verificación de estado = $conexionEstablecida")
@@ -70,7 +70,7 @@ class ConnectionService: Service() {
 
     // ==== Enviar Mensaje por broadcast ====
     private fun enviarBroadcast(mensaje: String) {
-        val enviarBroadcast = Intent("com.example.pruebaconexion.MensajeDeServicio").apply {
+        val enviarBroadcast = Intent("com.example.pruebaconexion.BroadCast").apply {
             setPackage(packageName)
             putExtra("Mensaje", mensaje)
         }
@@ -85,7 +85,7 @@ class ConnectionService: Service() {
         iniciarForeground()
         conectarDispositivoFijo()
 
-        val filter = IntentFilter("com.example.pruebaconexion.MensajeDeActivity")
+        val filter = IntentFilter("com.example.pruebaconexion.BroadCast")
         ContextCompat.registerReceiver(
             this, receptorMensaje, filter, ContextCompat.RECEIVER_NOT_EXPORTED
         )

@@ -12,14 +12,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.filled.TwoWheeler
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,11 +43,10 @@ import com.example.llaveelectronica.presentation.screens.setupIntoScreen.SetupIn
 import com.example.llaveelectronica.ui.theme.LlaveElectronicaTheme
 
 @Composable
-fun AddVehicle(
+fun PairDeviceAuthentication(
     viewModel: SetupIntoViewModel
 ) {
-
-    val addVehicleViewModel by viewModel.setupIntoState
+    val pairDeviceAuthenticationViewModel by viewModel.setupIntoState
 
     val modelosConImagen = mapOf(
         "Duke 200 G1" to R.mipmap.ktmduke200g1,
@@ -66,53 +67,34 @@ fun AddVehicle(
         modifier = Modifier
             //.fillMaxWidth()
             .height(350.dp)
-            .padding(horizontal = 8.dp), contentAlignment = Alignment.TopCenter
+            .padding(horizontal = 8.dp),
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
         ) {
             Text(
-                text = "Agregar Motocicleta",
+                text = "Vincular Motocicleta",
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.titleLarge
             )
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Row(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                ),
+                shape = RoundedCornerShape(20.dp)
             ) {
                 Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Top,
-                    modifier = Modifier.width(64.dp)
+                    modifier = Modifier.padding(20.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "Marca",
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    Text(
-                        text = "Modelo",
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(14.dp))
-
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-
                     Box(
                         modifier = Modifier.padding(8.dp)
                     ) {
@@ -124,9 +106,16 @@ fun AddVehicle(
                                 .clickable { expandedMarca = true }
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically) {
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.TwoWheeler,
+                                contentDescription = "Icono de motocicleta",
+                                tint = Color.Black
+                            )
+
                             Text(
-                                text = addVehicleViewModel.marca,
+                                text = pairDeviceAuthenticationViewModel.marca,
                                 color = Color.Black,
                                 style = MaterialTheme.typography.bodyLarge
                             )
@@ -134,65 +123,34 @@ fun AddVehicle(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                 contentDescription = null,
-                                tint = Color.Black
+                                tint = Color(0xFF8FD3E8)
                             )
-                        }
-
-                        // Menú desplegable
-                        DropdownMenu(
-                            expanded = expandedMarca,
-                            onDismissRequest = { expandedMarca = false }) {
-                            addVehicleViewModel.marcasDisponibles.forEach { marca ->
-                                DropdownMenuItem(text = { Text(marca) }, onClick = {
-                                    viewModel.stateButton(false)
-                                    viewModel.onMarcaSelected(marca)
-                                    expandedMarca = false
-                                    modeloSeleccionado = ""
-                                })
-                            }
                         }
                     }
 
-                    Box(modifier = Modifier.padding(8.dp)) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color(0xFF8FD3E8))
-                                .clickable { expandedModelo = true }
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = addVehicleViewModel.modelo,
-                                color = Color.Black,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                    // Variable para guardar lo que el usuario escribe
+                    var textoEntrada by remember { mutableStateOf("") }
 
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                contentDescription = null,
-                                tint = Color.Black
+                    Box(modifier = Modifier.padding(0.dp)) {
+                        OutlinedTextField(
+                            value = textoEntrada,
+                            onValueChange = { textoEntrada = it },
+                            label = { Text("Código de conexión") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            shape = RoundedCornerShape(16.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF8FD3E8),
+                                unfocusedBorderColor = Color.Gray,
+                                focusedLabelColor = Color.Black,
+                                cursorColor = Color.Black
                             )
-                        }
-
-                        // Menú desplegable
-                        DropdownMenu(
-                            expanded = expandedModelo,
-                            onDismissRequest = { expandedModelo = false }) {
-                            addVehicleViewModel.modelosDisponibles.forEach { modelo ->
-                                DropdownMenuItem(text = { Text(modelo) }, onClick = {
-                                    viewModel.onModeloSelected(modelo)
-                                    modeloSeleccionado = modelo
-                                    expandedModelo = false
-                                })
-                            }
-                        }
+                        )
                     }
+
+
                 }
             }
-
-            Spacer(modifier = Modifier.height(20.dp))
 
             val imagenSeleccionada = modelosConImagen[modeloSeleccionado]
 
@@ -212,7 +170,7 @@ fun AddVehicle(
 )
 
 @Composable
-fun ViewAddVehicle() {
+fun ViewPairDeviceAuthentication() {
 
     val context = LocalContext.current.applicationContext
     val repository = remember { SetupRepository(context) }
@@ -220,7 +178,7 @@ fun ViewAddVehicle() {
 
     LlaveElectronicaTheme {
         AppBackground {
-            AddVehicle(
+            PairDeviceAuthentication(
                 viewModel = vm,
             )
         }
