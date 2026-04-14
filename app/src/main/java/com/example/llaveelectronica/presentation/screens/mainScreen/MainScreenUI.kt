@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,8 +21,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -264,37 +268,124 @@ fun MainScreenUI(
             }
         }
 
-        // Botón
-        Button(
-            onClick = {
-                val intent = Intent(context, ConnectionService::class.java)
-                when (motorcycleStatus){
-                    0 -> context.startForegroundService(intent)
-                    1 -> context.stopService(intent)
-                    2 -> context.stopService(intent)
-                }
-            },
-            shape = RoundedCornerShape(50),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            ),
-            enabled = true,
+        Row (
             modifier = Modifier
                 .padding(bottom = 32.dp)
-                .navigationBarsPadding()
-                .height(48.dp)
-        ) {
-            Text(
-                text = when(motorcycleStatus){
-                    0 -> "Activar llave"
-                    1 -> "Desactivar llave"
-                    2 -> "Desconectar"
-                    else -> "Error"
+                .padding(horizontal = 4.dp)
+                .fillMaxWidth()
+                .navigationBarsPadding(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Box(
+                modifier = Modifier
+                    .size(50.dp) // Tamaño del círculo
+                    .clip(CircleShape) // Corta el contenido en forma de círculo
+                    //.background(MaterialTheme.colorScheme.primary), // Color de fondo
+                    .background(when (motorcycleStatus) {
+                        0 -> Color(0xFFBDBDBD)
+                        1 -> Color(0xFFBDBDBD)
+                        2 -> Color(0xFF2ECC71)
+                        else -> Color(0xFFE53935)
+                    }),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PowerSettingsNew,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+
+            Button(
+                onClick = {
+                    val intent = Intent(context, ConnectionService::class.java)
+                    when (motorcycleStatus){
+                        0 -> context.startForegroundService(intent)
+                        1 -> context.stopService(intent)
+                        2 -> context.stopService(intent)
+                    }
                 },
-                color = Color.White,
-                fontSize = 24.sp
-            )
+                shape = RoundedCornerShape(50),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                enabled = true,
+                modifier = Modifier.height(48.dp)
+            ) {
+                Text(
+                    text = when(motorcycleStatus){
+                        0 -> "Activar llave"
+                        1 -> "Desactivar llave"
+                        2 -> "Desconectar"
+                        else -> "Error"
+                    },
+                    color = Color.White,
+                    fontSize = 24.sp
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .size(50.dp) // Tamaño del círculo
+                    .clip(CircleShape) // Corta el contenido en forma de círculo
+                    //.background(MaterialTheme.colorScheme.primary), // Color de fondo
+                    .background(when (motorcycleStatus) {
+                        0 -> Color(0xFFBDBDBD)
+                        1 -> Color(0xFFBDBDBD)
+                        2 -> Color(0xFF2ECC71)
+                        else -> Color(0xFFE53935)
+                    }),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.NotificationsActive,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+
+//            Icon(
+//                imageVector = Icons.Default.NotificationsActive,
+//                contentDescription = null,
+//                tint = Color.White,
+//                modifier = Modifier.size(48.dp)
+//            )
         }
+
+        // Botón
+//        Button(
+//            onClick = {
+//                val intent = Intent(context, ConnectionService::class.java)
+//                when (motorcycleStatus){
+//                    0 -> context.startForegroundService(intent)
+//                    1 -> context.stopService(intent)
+//                    2 -> context.stopService(intent)
+//                }
+//            },
+//            shape = RoundedCornerShape(50),
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = MaterialTheme.colorScheme.primary
+//            ),
+//            enabled = true,
+//            modifier = Modifier
+//                .padding(bottom = 32.dp)
+//                .navigationBarsPadding()
+//                .height(48.dp)
+//        ) {
+//            Text(
+//                text = when(motorcycleStatus){
+//                    0 -> "Activar llave"
+//                    1 -> "Desactivar llave"
+//                    2 -> "Desconectar"
+//                    else -> "Error"
+//                },
+//                color = Color.White,
+//                fontSize = 24.sp
+//            )
+//        }
     }
 }
 
