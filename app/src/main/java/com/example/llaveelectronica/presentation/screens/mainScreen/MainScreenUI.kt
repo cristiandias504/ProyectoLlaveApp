@@ -32,6 +32,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,6 +41,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -72,6 +74,7 @@ fun MainScreenUI(
     val context = LocalContext.current
 
     var motorcycleStatus by remember { mutableIntStateOf(0) }
+    var powerButtonStatus by remember { mutableStateOf(false) }
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (motorcycleStatus == 0 || motorcycleStatus == 2) 1f else 0f,
@@ -99,8 +102,12 @@ fun MainScreenUI(
                     "Conexión Bluetooth finalizada" -> motorcycleStatus = 0
                     "Respuesta Verificación de estado = false" -> motorcycleStatus = 1
                     "Respuesta Verificación de estado = true" -> motorcycleStatus = 2
-                    "301Y" -> {}
-                    "302Y" -> {}
+                    "301Y" -> powerButtonStatus = !powerButtonStatus
+                    "302Y" -> {
+                        val intent = Intent(context, ConnectionService::class.java)
+                        context?.stopService(intent)
+                        motorcycleStatus = 0
+                    }
                 }
             }
         }
@@ -248,9 +255,9 @@ fun MainScreenUI(
                         trackColor = Color.Transparent, // Fondo transparente
                         strokeCap = StrokeCap.Butt // Sin bordes redondeados
                     )
+                    powerButtonStatus = false
                 } else {
                     LinearProgressIndicator(
-                        //progress = { if (motorcycleStatus == 0) animatedProgress else 1f },
                         progress = { animatedProgress },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -283,19 +290,29 @@ fun MainScreenUI(
                     .clip(CircleShape) // Corta el contenido en forma de círculo
                     //.background(MaterialTheme.colorScheme.primary), // Color de fondo
                     .background(when (motorcycleStatus) {
-                        0 -> Color(0xFFBDBDBD)
-                        1 -> Color(0xFFBDBDBD)
-                        2 -> Color(0xFF2ECC71)
+                        0 -> Color(0xFFBDBDBD).copy(alpha = 0.20f)
+                        1 -> Color(0xFFBDBDBD).copy(alpha = 0.20f)
+                        2 -> {
+                            if (powerButtonStatus) Color(0xFF2ECC71)
+                            else Color(0xFFE53935)
+                        }
                         else -> Color(0xFFE53935)
                     }),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.PowerSettingsNew,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(36.dp)
-                )
+                IconButton(
+                    onClick = {
+                        enviarBroadcast(context,"Enviar 301")
+                    },
+                    enabled = motorcycleStatus == 2
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PowerSettingsNew,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
             }
 
             Button(
@@ -332,60 +349,28 @@ fun MainScreenUI(
                     .clip(CircleShape) // Corta el contenido en forma de círculo
                     //.background(MaterialTheme.colorScheme.primary), // Color de fondo
                     .background(when (motorcycleStatus) {
-                        0 -> Color(0xFFBDBDBD)
-                        1 -> Color(0xFFBDBDBD)
-                        2 -> Color(0xFF2ECC71)
+                        0 -> Color(0xFFBDBDBD).copy(alpha = 0.20f)
+                        1 -> Color(0xFFBDBDBD).copy(alpha = 0.20f)
+                        2 -> Color(0xFFFFC107)
                         else -> Color(0xFFE53935)
                     }),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.NotificationsActive,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(36.dp)
-                )
+                IconButton(
+                    onClick = {
+                        enviarBroadcast(context,"Enviar 302")
+                    },
+                    enabled = motorcycleStatus == 2
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.NotificationsActive,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
             }
-
-//            Icon(
-//                imageVector = Icons.Default.NotificationsActive,
-//                contentDescription = null,
-//                tint = Color.White,
-//                modifier = Modifier.size(48.dp)
-//            )
         }
-
-        // Botón
-//        Button(
-//            onClick = {
-//                val intent = Intent(context, ConnectionService::class.java)
-//                when (motorcycleStatus){
-//                    0 -> context.startForegroundService(intent)
-//                    1 -> context.stopService(intent)
-//                    2 -> context.stopService(intent)
-//                }
-//            },
-//            shape = RoundedCornerShape(50),
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = MaterialTheme.colorScheme.primary
-//            ),
-//            enabled = true,
-//            modifier = Modifier
-//                .padding(bottom = 32.dp)
-//                .navigationBarsPadding()
-//                .height(48.dp)
-//        ) {
-//            Text(
-//                text = when(motorcycleStatus){
-//                    0 -> "Activar llave"
-//                    1 -> "Desactivar llave"
-//                    2 -> "Desconectar"
-//                    else -> "Error"
-//                },
-//                color = Color.White,
-//                fontSize = 24.sp
-//            )
-//        }
     }
 }
 
